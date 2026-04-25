@@ -140,3 +140,9 @@ vite.config.ts.timestamp-*
 
 # Compodoc generated documentation
 back/documentation/
+
+# Variables de environnement
+.env                                                                                                                
+.env.*                                                                                                              
+!.env.example
+
