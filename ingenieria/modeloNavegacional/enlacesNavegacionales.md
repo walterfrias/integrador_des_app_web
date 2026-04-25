@@ -9,6 +9,8 @@
 
 Un enlace navegacional define la transición entre dos contextos. Puede ser activado por una acción del usuario o por una condición del sistema.
 
+### Base
+
 | ID    | Origen                  | Destino                 | Activador                              | Condición                                      |
 |-------|-------------------------|-------------------------|----------------------------------------|------------------------------------------------|
 | EN01  | CN01 - Login            | CN02 - Dashboard        | Envío de credenciales                  | Usuario existe y está en estado "Activo"        |
@@ -26,6 +28,15 @@ Un enlace navegacional define la transición entre dos contextos. Puede ser acti
 | EN13  | CN08 - Form. Tarea      | CN04 - Detalle Proyecto | Guardar exitoso / Cancelar             | —                                              |
 | EN14  | Cualquier contexto      | CN01 - Login            | Clic en "Cerrar sesión"                | Usuario autenticado                            |
 
+### E01 — Gestión de usuarios y roles
+
+| ID    | Origen                  | Destino                 | Activador                              | Condición                                      |
+|-------|-------------------------|-------------------------|----------------------------------------|------------------------------------------------|
+| EN15  | CN02 - Dashboard        | CN09 - Lista Usuarios   | Clic en "Usuarios"                     | Usuario autenticado con rol Admin              |
+| EN16  | CN09 - Lista Usuarios   | CN10 - Form. Usuario    | Clic en "Crear usuario"                | Usuario autenticado con rol Admin              |
+| EN17  | CN09 - Lista Usuarios   | CN10 - Form. Usuario    | Clic en "Editar usuario"               | Usuario seleccionado existe                    |
+| EN18  | CN10 - Form. Usuario    | CN09 - Lista Usuarios   | Guardar exitoso / Cancelar             | —                                              |
+
 ---
 
 ## Diagrama de Flujo Navegacional
@@ -40,10 +51,13 @@ flowchart TD
     CN06([CN06\nLista Clientes])
     CN07([CN07\nForm. Cliente])
     CN08([CN08\nForm. Tarea])
+    CN09([CN09\nLista Usuarios\nsolo Admin])
+    CN10([CN10\nForm. Usuario\nsolo Admin])
 
     CN01 -->|"EN01: credenciales válidas"| CN02
     CN02 -->|"EN02: ir a Proyectos"| CN03
     CN02 -->|"EN03: ir a Clientes"| CN06
+    CN02 -->|"EN15: ir a Usuarios (Admin)"| CN09
     CN03 -->|"EN04: ver detalle"| CN04
     CN03 -->|"EN05: crear proyecto"| CN05
     CN04 -->|"EN06: editar proyecto"| CN05
@@ -54,7 +68,11 @@ flowchart TD
     CN06 -->|"EN11: editar cliente"| CN07
     CN07 -->|"EN12: guardar / cancelar"| CN06
     CN08 -->|"EN13: guardar / cancelar"| CN04
+    CN09 -->|"EN16: crear usuario"| CN10
+    CN09 -->|"EN17: editar usuario"| CN10
+    CN10 -->|"EN18: guardar / cancelar"| CN09
     CN02 -->|"EN14: cerrar sesión"| CN01
     CN03 -->|"EN14: cerrar sesión"| CN01
     CN06 -->|"EN14: cerrar sesión"| CN01
+    CN09 -->|"EN14: cerrar sesión"| CN01
 ```
