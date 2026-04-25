@@ -1,19 +1,17 @@
-import {
-  Body,
-  Controller,
-  Post,
-  NotImplementedException,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dtos/input/login.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor() {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Post('')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ schema: { example: { accessToken: 'eyJ...' } } })
+  @Post()
   async login(@Body() dto: LoginDto): Promise<{ accessToken: string }> {
-    console.log(dto);
-
-    return await Promise.reject(new NotImplementedException());
+    return this.authService.login(dto);
   }
 }
