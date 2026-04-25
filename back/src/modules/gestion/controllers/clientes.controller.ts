@@ -2,46 +2,44 @@ import {
   Body,
   Controller,
   Get,
-  NotImplementedException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { ClientesService } from '../services/clientes.service';
 import { CreateClienteDto } from '../dtos/input/create-cliente.dto';
-import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
-import { ListClienteDTO } from '../dtos/output/list-cliente.dto';
 import { UpdateClienteDto } from '../dtos/input/update-cliente.dto';
+import { ListClienteDTO } from '../dtos/output/list-cliente.dto';
 import { EstadosClientesEnum } from '../enums/estados-clientes.enum';
 
+@ApiTags('clientes')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('clientes')
 export class ClientesController {
-  constructor() {}
+  constructor(private readonly clientesService: ClientesService) {}
 
-  @ApiBearerAuth()
-  @Post()
-  crearCliente(@Body() dto: CreateClienteDto): Promise<{ id: number }> {
-    console.log(dto);
-    throw new NotImplementedException();
-  }
-
-  @ApiBearerAuth()
-  @Put(':id')
-  actualizarCliente(
-    @Param('id') id: number,
-    @Body() dto: UpdateClienteDto,
-  ): Promise<void> {
-    console.log(id, dto);
-    throw new NotImplementedException();
-  }
-
-  @ApiBearerAuth()
   @ApiOkResponse({ type: ListClienteDTO, isArray: true })
   @Get()
-  obtenerClientes(
-    @Query('estado') estado: EstadosClientesEnum,
-  ): Promise<ListClienteDTO[]> {
-    console.log(estado);
-    throw new NotImplementedException();
+  listar(@Query('estado') estado?: EstadosClientesEnum): Promise<ListClienteDTO[]> {
+    return this.clientesService.listar(estado);
+  }
+
+  @Post()
+  crear(@Body() dto: CreateClienteDto): Promise<{ id: number }> {
+    return this.clientesService.crear(dto);
+  }
+
+  @Put(':id')
+  actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateClienteDto,
+  ): Promise<void> {
+    return this.clientesService.actualizar(id, dto);
   }
 }

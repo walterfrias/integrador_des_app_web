@@ -1,11 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Contacto } from './contacto.entity';
 import { Proyecto } from './proyecto.entity';
-
-export enum EstadoCliente {
-  ACTIVO = 'ACTIVO',
-  BAJA = 'BAJA',
-}
+import { EstadosClientesEnum } from '../enums/estados-clientes.enum';
 
 @Entity('clientes')
 export class Cliente {
@@ -15,8 +11,8 @@ export class Cliente {
   @Column({ unique: true })
   nombre!: string;
 
-  @Column({ type: 'enum', enum: EstadoCliente, default: EstadoCliente.ACTIVO })
-  estado!: EstadoCliente;
+  @Column({ type: 'enum', enum: EstadosClientesEnum, default: EstadosClientesEnum.ACTIVO })
+  estado!: EstadosClientesEnum;
 
   @OneToMany(() => Contacto, (contacto) => contacto.cliente, { cascade: true })
   contactos!: Contacto[];
