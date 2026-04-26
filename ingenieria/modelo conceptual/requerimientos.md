@@ -10,7 +10,7 @@
 | RF04 | Consultar usuario | El sistema debe permitir visualizar información de usuarios |
 | RF05 | Eliminar usuario | El sistema debe permitir eliminar o dar de baja usuarios |
 | RF06 | Cambiar estado de usuario | El sistema debe permitir cambiar el estado (Activo/Baja) de un usuario |
-
+|----|-------------|------------|
 | RF07 | Crear proyecto | El sistema debe permitir crear nuevos proyectos |
 | RF08 | Modificar proyecto | El sistema debe permitir actualizar datos de proyectos |
 | RF09 | Consultar proyecto | El sistema debe permitir visualizar proyectos y su detalle |
@@ -18,12 +18,12 @@
 | RF11 | Cambiar estado de proyecto | El sistema debe permitir cambiar el estado de un proyecto |
 | RF12 | Asociar cliente a proyecto | El sistema debe permitir asignar un cliente a un proyecto |
 | RF13 | Consultar tareas de un proyecto | El sistema debe permitir visualizar las tareas de un proyecto |
-
+|----|-------------|------------|
 | RF14 | Registrar cliente | El sistema debe permitir crear nuevos clientes |
 | RF15 | Modificar cliente | El sistema debe permitir actualizar datos de clientes |
 | RF16 | Consultar cliente | El sistema debe permitir visualizar clientes |
 | RF17 | Eliminar cliente | El sistema debe permitir eliminar clientes |
-
+|----|-------------|------------|
 | RF18 | Crear tarea | El sistema debe permitir agregar tareas a un proyecto |
 | RF19 | Modificar tarea | El sistema debe permitir actualizar tareas |
 | RF20 | Consultar tarea | El sistema debe permitir visualizar tareas |
