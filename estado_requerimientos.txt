@@ -1,0 +1,88 @@
+ESTADO DE REQUERIMIENTOS — SISTEMA DE GESTIÓN DE PROYECTOS
+UNER — Ingeniería de Software
+Fecha: 25/04/2026
+
+=============================================================
+RF    DESCRIPCIÓN                              ESTADO
+=============================================================
+
+BASE
+RF01  Autenticar usuario (JWT)                 ✅ Completo
+RF02  Listar proyectos                         ❌ Pendiente
+RF03  Crear proyecto                           ❌ Pendiente
+RF04  Modificar proyecto                       ❌ Pendiente
+RF05  Ver detalle de proyecto                  ❌ Pendiente
+RF06  Listar clientes                          ✅ Completo
+RF07  Crear cliente                            ✅ Completo
+RF08  Modificar cliente                        ✅ Completo
+RF09  Dar de baja cliente (validar R02)        ⚠️  Parcial
+RF10  Agregar tarea                            ❌ Pendiente
+RF11  Modificar tarea                          ❌ Pendiente
+RF12  Eliminar tarea                           ❌ Pendiente
+
+E01 — Gestión de usuarios y roles
+RF13  Listar usuarios (solo ADMIN)             ✅ Completo
+RF14  Crear usuario (solo ADMIN)               ✅ Completo
+RF15  Modificar usuario (solo ADMIN)           ✅ Completo
+RF16  Dar de baja usuario                      ✅ Completo
+
+E02 — Búsqueda avanzada
+RF17  Filtrar/paginar proyectos                ❌ Pendiente
+RF18  Filtrar/paginar clientes                 ❌ Pendiente
+RF19  Filtrar/paginar tareas                   ❌ Pendiente
+
+E03 — Estadísticas
+RF20  Estadísticas dashboard                   ❌ Pendiente
+
+E04 — Panel Kanban
+RF21  Panel Kanban de tareas                   ❌ Pendiente
+
+E05 — Fecha de finalización
+RF22  Visualizar proyectos retrasados          ❌ Pendiente
+
+E06 — Contacto de clientes
+RF23  Agregar contacto a cliente               ❌ Pendiente
+RF24  Modificar contacto de cliente            ❌ Pendiente
+RF25  Eliminar contacto de cliente             ❌ Pendiente
+
+E07 — Exportación CSV
+RF26  Exportar proyectos a CSV                 ❌ Pendiente
+RF27  Exportar tareas a CSV                    ❌ Pendiente
+
+=============================================================
+RESUMEN
+=============================================================
+
+Auth + Usuarios (E01) — Walter:   100% completo
+Base del sistema:                   30% completo
+Pendiente:                          70% restante
+
+=============================================================
+DIVISIÓN SUGERIDA DE TAREAS
+=============================================================
+
+Integrante 1 (Walter) — COMPLETO
+  - Auth + JWT + Guard de roles
+  - Gestión de usuarios (RF13-RF16)
+
+Integrante 2 — Clientes + Contactos
+  - RF06-RF09, RF23-RF25
+
+Integrante 3 — Proyectos
+  - RF02-RF05, RF22
+
+Integrante 4 — Tareas
+  - RF10-RF12, RF21 (Kanban)
+
+Integrante 5 — Búsqueda + Stats + CSV
+  - RF17-RF20, RF26-RF27
+  - ATENCIÓN: esta persona depende de que las demás terminen primero
+
+=============================================================
+NOTA PARA EL GRUPO
+=============================================================
+
+- El backend base está en la rama: develop
+- Comando para obtener los cambios: git pull origin develop
+- Cada uno trabaja en su propia rama y luego mergea a develop
+- Los commits deben referenciar los RFs: feat: descripción (RF02, RF03)
