@@ -25,6 +25,15 @@ export class UsuariosService {
     });
   }
 
+  async obtenerPorId(id: number): Promise<ListUsuarioDto> {
+    const usuario = await this.usuarioRepository.findOne({
+      where: { id },
+      select: ['id', 'nombre', 'rol', 'estado'],
+    });
+    if (!usuario) throw new NotFoundException('Usuario no encontrado');
+    return usuario;
+  }
+
   async crear(dto: CreateUsuarioDto): Promise<{ id: number }> {
     const existe = await this.usuarioRepository.findOneBy({ nombre: dto.nombre });
     if (existe) throw new ConflictException('El nombre de usuario ya existe');
