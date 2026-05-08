@@ -19,7 +19,7 @@ export class MainLayoutComponent {
   private router = inject(Router);
 
   sidebarCollapsed = signal(false);
-  darkMode = signal(false);
+  darkMode = signal(localStorage.getItem('darkMode') === 'true');
 
   navItems: NavItem[] = [
     { label: 'Dashboard', icon: 'pi pi-home', route: '/app/dashboard' },
@@ -35,6 +35,7 @@ export class MainLayoutComponent {
   toggleDarkMode() {
     this.darkMode.update(v => !v);
     document.documentElement.classList.toggle('dark', this.darkMode());
+    localStorage.setItem('darkMode', String(this.darkMode()));
   }
 
   logout() {
