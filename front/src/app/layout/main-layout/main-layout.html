@@ -1,0 +1,75 @@
+<div class="flex h-screen bg-slate-50 dark:bg-slate-950">
+
+  <!-- Sidebar -->
+  <aside
+    class="flex flex-col bg-slate-900 transition-all duration-300 ease-in-out"
+    [class.w-60]="!sidebarCollapsed()"
+    [class.w-16]="sidebarCollapsed()"
+  >
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-4 h-14 border-b border-slate-700">
+      <span class="text-indigo-400 text-xl pi pi-code"></span>
+      @if (!sidebarCollapsed()) {
+        <span class="text-white font-semibold text-sm tracking-wide">GestProyectos</span>
+      }
+    </div>
+
+    <!-- Nav items -->
+    <nav class="flex flex-col gap-1 p-2 flex-1">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-indigo-600 text-white"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors duration-150 cursor-pointer"
+          [class.justify-center]="sidebarCollapsed()"
+        >
+          <span class="text-base shrink-0" [class]="item.icon"></span>
+          @if (!sidebarCollapsed()) {
+            <span class="text-sm font-medium">{{ item.label }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <!-- Toggle button -->
+    <div class="p-2 border-t border-slate-700">
+      <button
+        (click)="toggleSidebar()"
+        class="flex items-center justify-center w-full py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors duration-150"
+      >
+        <span class="pi" [class.pi-chevron-left]="!sidebarCollapsed()" [class.pi-chevron-right]="sidebarCollapsed()"></span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="flex flex-col flex-1 overflow-hidden">
+
+    <!-- Topbar -->
+    <header class="flex items-center justify-between px-6 h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shrink-0">
+      <h1 class="text-slate-800 dark:text-slate-100 font-medium text-sm">Sistema de Gestión de Proyectos</h1>
+      <div class="flex items-center gap-4">
+        <button
+          (click)="toggleDarkMode()"
+          class="flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-white transition-colors duration-150"
+          [title]="darkMode() ? 'Modo claro' : 'Modo oscuro'"
+        >
+          <span class="pi" [class.pi-sun]="darkMode()" [class.pi-moon]="!darkMode()"></span>
+        </button>
+        <button
+          (click)="logout()"
+          class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors duration-150"
+        >
+          <span class="pi pi-sign-out"></span>
+          <span>Salir</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="flex-1 overflow-auto p-6">
+      <router-outlet />
+    </main>
+
+  </div>
+</div>
