@@ -1,0 +1,58 @@
+<p-confirmDialog />
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100">Usuarios</h2>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestión de usuarios del sistema</p>
+  </div>
+  <a
+    routerLink="nuevo"
+    class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-150"
+  >
+    <span class="pi pi-plus"></span>
+    Nuevo usuario
+  </a>
+</div>
+
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+  <p-table
+    [value]="usuarios()"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="10"
+    styleClass="p-datatable-sm"
+  >
+    <ng-template #header>
+      <tr>
+        <th class="text-slate-600 dark:text-slate-300">Nombre</th>
+        <th class="text-slate-600 dark:text-slate-300">Rol</th>
+        <th class="text-slate-600 dark:text-slate-300">Estado</th>
+        <th class="text-slate-600 dark:text-slate-300 text-right">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-usuario>
+      <tr>
+        <td class="font-medium text-slate-800 dark:text-slate-100">{{ usuario.nombre }}</td>
+        <td class="text-slate-600 dark:text-slate-400 text-sm">{{ usuario.rol }}</td>
+        <td>
+          <p-tag [value]="usuario.estado" [severity]="severidadEstado(usuario.estado)" />
+        </td>
+        <td class="text-right">
+          <div class="flex items-center justify-end gap-2">
+            <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[usuario.id, 'editar']"></button>
+            @if (usuario.estado === 'ACTIVO') {
+              <button pButton icon="pi pi-ban" severity="danger" text size="small" (click)="confirmarBaja(usuario)"></button>
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #empty>
+      <tr>
+        <td colspan="4" class="text-center text-slate-400 dark:text-slate-500 py-8">No hay usuarios registrados</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
