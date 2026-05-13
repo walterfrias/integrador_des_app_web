@@ -7,12 +7,13 @@
 -- TIPOS ENUMERADOS
 -- ------------------------------------------------------------
 
-CREATE TYPE roles_usuarios    AS ENUM ('ADMIN', 'OPERADOR');
-CREATE TYPE estados_usuarios  AS ENUM ('ACTIVO', 'BAJA');
-CREATE TYPE estados_clientes  AS ENUM ('ACTIVO', 'BAJA');
-CREATE TYPE estados_proyectos AS ENUM ('ACTIVO', 'FINALIZADO', 'BAJA');
-CREATE TYPE estados_tareas    AS ENUM ('PENDIENTE', 'FINALIZADA', 'BAJA');
-CREATE TYPE tipos_contacto    AS ENUM ('TELEFONO', 'EMAIL');
+CREATE TYPE roles_usuarios        AS ENUM ('ADMIN', 'OPERADOR');
+CREATE TYPE estados_usuarios      AS ENUM ('ACTIVO', 'BAJA');
+CREATE TYPE estados_clientes      AS ENUM ('ACTIVO', 'BAJA');
+CREATE TYPE estados_proyectos     AS ENUM ('ACTIVO', 'FINALIZADO', 'BAJA');
+CREATE TYPE estados_tareas        AS ENUM ('PENDIENTE', 'FINALIZADA', 'BAJA');
+CREATE TYPE tipos_contacto        AS ENUM ('TELEFONO', 'EMAIL');
+CREATE TYPE estados_asignaciones  AS ENUM ('ACTIVO', 'BAJA');
 
 -- ------------------------------------------------------------
 -- TABLAS
@@ -65,6 +66,21 @@ CREATE TABLE tareas (
         ON DELETE CASCADE
 );
 
+CREATE TABLE asignaciones_proyecto (
+    id               SERIAL PRIMARY KEY,
+    id_usuario       INT                  NOT NULL,
+    id_proyecto      INT                  NOT NULL,
+    estado           estados_asignaciones NOT NULL DEFAULT 'ACTIVO',
+    fecha_asignacion DATE                 NOT NULL DEFAULT CURRENT_DATE,
+    CONSTRAINT fk_asignaciones_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios (id),
+    CONSTRAINT fk_asignaciones_proyecto
+        FOREIGN KEY (id_proyecto)
+        REFERENCES proyectos (id)
+        ON DELETE CASCADE
+);
+
 -- ------------------------------------------------------------
 -- ÍNDICES
 -- ------------------------------------------------------------
@@ -74,6 +90,8 @@ CREATE INDEX idx_proyectos_cliente   ON proyectos (id_cliente);
 CREATE INDEX idx_tareas_proyecto     ON tareas (id_proyecto);
 CREATE INDEX idx_tareas_estado       ON tareas (estado);
 CREATE INDEX idx_contactos_cliente   ON contactos_clientes (id_cliente);
+CREATE INDEX idx_asignaciones_proyecto ON asignaciones_proyecto (id_proyecto);
+CREATE INDEX idx_asignaciones_usuario  ON asignaciones_proyecto (id_usuario);
 
 -- ------------------------------------------------------------
 -- DATOS INICIALES
