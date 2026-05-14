@@ -19,6 +19,15 @@ export class Usuario {
   @Column({ unique: true })
   nombre!: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  apellido!: string | null;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  email!: string | null;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  cuil!: string | null;
+
   @Column({ select: false })
   clave!: string;
 

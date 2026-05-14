@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EstadoUsuario, RolUsuario } from '../../../auth/entities/usuario.entity';
 
 export class ListUsuarioDto {
@@ -7,6 +7,15 @@ export class ListUsuarioDto {
 
   @ApiProperty()
   nombre!: string;
+
+  @ApiPropertyOptional()
+  apellido!: string | null;
+
+  @ApiPropertyOptional()
+  email!: string | null;
+
+  @ApiPropertyOptional()
+  cuil!: string | null;
 
   @ApiProperty({ enum: RolUsuario })
   rol!: RolUsuario;
