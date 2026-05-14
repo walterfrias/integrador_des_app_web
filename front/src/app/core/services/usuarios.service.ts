@@ -27,6 +27,7 @@ export interface UpdateUsuarioPayload {
   apellido?: string;
   email?: string;
   cuil?: string;
+  estado?: string;
 }
 
 @Injectable({ providedIn: 'root' })

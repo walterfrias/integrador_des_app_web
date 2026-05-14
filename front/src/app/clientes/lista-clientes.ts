@@ -5,56 +5,56 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { UsuariosService, Usuario } from '../core/services/usuarios.service';
+import { ClientesService, Cliente } from '../core/services/clientes.service';
 
 @Component({
-  selector: 'app-lista-usuarios',
+  selector: 'app-lista-clientes',
   imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule],
   providers: [ConfirmationService],
-  templateUrl: './lista-usuarios.html',
+  templateUrl: './lista-clientes.html',
 })
-export class ListaUsuariosComponent implements OnInit {
-  private usuariosService = inject(UsuariosService);
+export class ListaClientesComponent implements OnInit {
+  private clientesService = inject(ClientesService);
   private confirmationService = inject(ConfirmationService);
 
-  usuarios = signal<Usuario[]>([]);
+  clientes = signal<Cliente[]>([]);
   loading = signal(true);
 
   ngOnInit() {
-    this.cargarUsuarios();
+    this.cargarClientes();
   }
 
-  cargarUsuarios() {
+  cargarClientes() {
     this.loading.set(true);
-    this.usuariosService.listar().subscribe({
+    this.clientesService.listar().subscribe({
       next: data => {
-        this.usuarios.set(data);
+        this.clientes.set(data);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
     });
   }
 
-  confirmarBaja(usuario: Usuario) {
+  confirmarBaja(cliente: Cliente) {
     this.confirmationService.confirm({
-      message: `¿Dar de baja al usuario "${usuario.nombre}"?`,
+      message: `¿Dar de baja al cliente "${cliente.nombre}"?`,
       header: 'Confirmar baja',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Dar de baja',
       rejectLabel: 'Cancelar',
-      accept: () => this.darDeBaja(usuario.id),
+      accept: () => this.darDeBaja(cliente.id),
     });
   }
 
   private darDeBaja(id: number) {
-    this.usuariosService.darDeBaja(id).subscribe({
-      next: () => this.cargarUsuarios(),
+    this.clientesService.actualizar(id, { estado: 'BAJA' }).subscribe({
+      next: () => this.cargarClientes(),
     });
   }
 
   reactivar(id: number) {
-    this.usuariosService.actualizar(id, { estado: 'ACTIVO' }).subscribe({
-      next: () => this.cargarUsuarios(),
+    this.clientesService.actualizar(id, { estado: 'ACTIVO' }).subscribe({
+      next: () => this.cargarClientes(),
     });
   }
 
