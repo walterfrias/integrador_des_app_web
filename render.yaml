@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: cooperadora-backend
+    name: back_tpi_daw
     env: node
     rootDir: back
     buildCommand: npm ci && npm run build
-    startCommand: npm run migration:run && node dist/main
+    startCommand: npm run migration:run && npm run seed && node dist/main
     envVars:
       - key: NODE_ENV
         value: production
