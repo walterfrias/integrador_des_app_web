@@ -4,7 +4,7 @@ services:
     env: node
     rootDir: back
     buildCommand: npm ci && npm run build
-    startCommand: npm run migration:run && npm run seed && node dist/main
+    startCommand: npm run migration:run:prod && npm run seed && node dist/main
     envVars:
       - key: NODE_ENV
         value: production
