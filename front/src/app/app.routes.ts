@@ -16,6 +16,18 @@ export const routes: Routes = [
         loadComponent: () => import('./dashboard/dashboard').then(m => m.DashboardComponent),
       },
       {
+        path: 'clientes',
+        loadComponent: () => import('./clientes/lista-clientes').then(m => m.ListaClientesComponent),
+      },
+      {
+        path: 'clientes/nuevo',
+        loadComponent: () => import('./clientes/form-cliente').then(m => m.FormClienteComponent),
+      },
+      {
+        path: 'clientes/:id/editar',
+        loadComponent: () => import('./clientes/form-cliente').then(m => m.FormClienteComponent),
+      },
+      {
         path: 'usuarios',
         loadComponent: () => import('./usuarios/lista-usuarios').then(m => m.ListaUsuariosComponent),
       },
