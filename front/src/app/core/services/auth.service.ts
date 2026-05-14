@@ -11,8 +11,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private readonly TOKEN_KEY = 'access_token';
 
-  login(nombre: string, clave: string) {
-    return this.http.post<LoginResponse>('/api/v1/auth', { nombre, clave }).pipe(
+  login(email: string, clave: string) {
+    return this.http.post<LoginResponse>('/api/v1/auth', { email, clave }).pipe(
       tap(res => localStorage.setItem(this.TOKEN_KEY, res.accessToken))
     );
   }
