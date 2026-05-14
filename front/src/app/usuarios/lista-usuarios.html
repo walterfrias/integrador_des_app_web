@@ -43,6 +43,8 @@
             <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[usuario.id, 'editar']"></button>
             @if (usuario.estado === 'ACTIVO') {
               <button pButton icon="pi pi-ban" severity="danger" text size="small" (click)="confirmarBaja(usuario)"></button>
+            } @else {
+              <button pButton icon="pi pi-check-circle" severity="success" text size="small" (click)="reactivar(usuario.id)"></button>
             }
           </div>
         </td>
