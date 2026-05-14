@@ -10,17 +10,17 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
 
       <div class="flex flex-col gap-1">
-        <label for="nombre" class="text-sm font-medium text-gray-700 dark:text-slate-300">Usuario</label>
+        <label for="email" class="text-sm font-medium text-gray-700 dark:text-slate-300">Email</label>
         <input
           pInputText
-          id="nombre"
-          type="text"
-          formControlName="nombre"
-          placeholder="Tu nombre de usuario"
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="tu@email.com"
           class="w-full"
         />
-        @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
-          <small class="text-red-500">El usuario es requerido</small>
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <small class="text-red-500">Ingresá un email válido</small>
         }
       </div>
 
@@ -33,6 +33,7 @@
           [feedback]="false"
           [toggleMask]="true"
           styleClass="w-full"
+          inputStyleClass="w-full"
         />
         @if (form.get('clave')?.invalid && form.get('clave')?.touched) {
           <small class="text-red-500">La contraseña es requerida</small>

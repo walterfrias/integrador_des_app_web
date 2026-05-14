@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
 import { EstadoUsuario, RolUsuario } from '../../../auth/entities/usuario.entity';
 
 export class UpdateUsuarioDto {
@@ -7,6 +7,21 @@ export class UpdateUsuarioDto {
   @IsString()
   @IsOptional()
   nombre?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  apellido?: string;
+
+  @ApiPropertyOptional()
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  cuil?: string;
 
   @ApiPropertyOptional()
   @IsString()

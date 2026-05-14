@@ -21,14 +21,14 @@ export class UsuariosService {
 
   async listar(): Promise<ListUsuarioDto[]> {
     return this.usuarioRepository.find({
-      select: ['id', 'nombre', 'rol', 'estado'],
+      select: ['id', 'nombre', 'apellido', 'email', 'cuil', 'rol', 'estado'],
     });
   }
 
   async obtenerPorId(id: number): Promise<ListUsuarioDto> {
     const usuario = await this.usuarioRepository.findOne({
       where: { id },
-      select: ['id', 'nombre', 'rol', 'estado'],
+      select: ['id', 'nombre', 'apellido', 'email', 'cuil', 'rol', 'estado'],
     });
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
     return usuario;

@@ -4,8 +4,29 @@ import { HttpClient } from '@angular/common/http';
 export interface Usuario {
   id: number;
   nombre: string;
-  rol: 'ADMIN' | 'USER';
+  apellido: string | null;
+  email: string | null;
+  cuil: string | null;
+  rol: 'ADMIN' | 'OPERADOR';
   estado: 'ACTIVO' | 'BAJA';
+}
+
+export interface CreateUsuarioPayload {
+  nombre: string;
+  clave: string;
+  rol: string;
+  apellido?: string;
+  email?: string;
+  cuil?: string;
+}
+
+export interface UpdateUsuarioPayload {
+  nombre?: string;
+  clave?: string;
+  rol?: string;
+  apellido?: string;
+  email?: string;
+  cuil?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -21,11 +42,11 @@ export class UsuariosService {
     return this.http.get<Usuario>(`${this.base}/${id}`);
   }
 
-  crear(data: { nombre: string; clave: string; rol: string }) {
+  crear(data: CreateUsuarioPayload) {
     return this.http.post<{ id: number }>(this.base, data);
   }
 
-  actualizar(id: number, data: { nombre?: string; clave?: string; rol?: string }) {
+  actualizar(id: number, data: UpdateUsuarioPayload) {
     return this.http.put<void>(`${this.base}/${id}`, data);
   }
 

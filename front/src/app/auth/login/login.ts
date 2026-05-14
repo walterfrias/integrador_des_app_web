@@ -18,7 +18,7 @@ export class LoginComponent {
   private auth = inject(AuthService);
 
   form = this.fb.group({
-    nombre: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
     clave: ['', Validators.required],
   });
 
@@ -31,9 +31,9 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    const { nombre, clave } = this.form.value;
+    const { email, clave } = this.form.value;
 
-    this.auth.login(nombre!, clave!).subscribe({
+    this.auth.login(email!, clave!).subscribe({
       next: () => this.router.navigate(['/app/dashboard']),
       error: () => {
         this.errorMessage = 'Credenciales incorrectas';

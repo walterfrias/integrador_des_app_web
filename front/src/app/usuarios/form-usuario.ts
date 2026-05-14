@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
-import { UsuariosService } from '../core/services/usuarios.service';
+import { UsuariosService, CreateUsuarioPayload, UpdateUsuarioPayload } from '../core/services/usuarios.service';
 
 @Component({
   selector: 'app-form-usuario',
@@ -30,6 +30,9 @@ export class FormUsuarioComponent implements OnInit {
 
   form = this.fb.group({
     nombre: ['', Validators.required],
+    apellido: [''],
+    email: ['', Validators.email],
+    cuil: [''],
     clave: ['', Validators.minLength(6)],
     rol: ['OPERADOR', Validators.required],
   });
@@ -49,7 +52,13 @@ export class FormUsuarioComponent implements OnInit {
 
     this.usuariosService.obtenerPorId(this.id).subscribe({
       next: usuario => {
-        this.form.patchValue({ nombre: usuario.nombre, rol: usuario.rol });
+        this.form.patchValue({
+          nombre: usuario.nombre,
+          apellido: usuario.apellido ?? '',
+          email: usuario.email ?? '',
+          cuil: usuario.cuil ?? '',
+          rol: usuario.rol,
+        });
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -62,11 +71,14 @@ export class FormUsuarioComponent implements OnInit {
     this.guardando.set(true);
     this.errorMessage.set('');
 
-    const { nombre, clave, rol } = this.form.value;
+    const { nombre, apellido, email, cuil, clave, rol } = this.form.value;
 
     if (this.esEdicion) {
-      const data: Record<string, string> = { nombre: nombre!, rol: rol! };
-      if (clave) data['clave'] = clave;
+      const data: UpdateUsuarioPayload = { nombre: nombre!, rol: rol! };
+      if (clave) data.clave = clave;
+      if (apellido) data.apellido = apellido;
+      if (email) data.email = email;
+      if (cuil) data.cuil = cuil;
 
       this.usuariosService.actualizar(this.id!, data).subscribe({
         next: () => this.router.navigate(['/app/usuarios']),
@@ -76,10 +88,15 @@ export class FormUsuarioComponent implements OnInit {
         },
       });
     } else {
-      this.usuariosService.crear({ nombre: nombre!, clave: clave!, rol: rol! }).subscribe({
+      const data: CreateUsuarioPayload = { nombre: nombre!, clave: clave!, rol: rol! };
+      if (apellido) data.apellido = apellido;
+      if (email) data.email = email;
+      if (cuil) data.cuil = cuil;
+
+      this.usuariosService.crear(data).subscribe({
         next: () => this.router.navigate(['/app/usuarios']),
         error: () => {
-          this.errorMessage.set('Error al crear el usuario. El nombre puede estar en uso.');
+          this.errorMessage.set('Error al crear el usuario. Verificá que el email o CUIL no estén en uso.');
           this.guardando.set(false);
         },
       });
