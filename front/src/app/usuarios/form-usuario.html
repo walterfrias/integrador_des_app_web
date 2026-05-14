@@ -26,12 +26,32 @@
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col gap-5">
 
-      <div class="flex flex-col gap-1.5">
-        <label for="nombre" class="text-sm font-medium text-slate-700 dark:text-slate-300">Nombre de usuario</label>
-        <input pInputText id="nombre" formControlName="nombre" placeholder="Ingresá el nombre" class="w-full" />
-        @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
-          <small class="text-red-500">El nombre es requerido</small>
-        }
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="nombre" class="text-sm font-medium text-slate-700 dark:text-slate-300">Nombre <span class="text-red-500">*</span></label>
+          <input pInputText id="nombre" formControlName="nombre" placeholder="Nombre" class="w-full" />
+          @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+            <small class="text-red-500">Requerido</small>
+          }
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="apellido" class="text-sm font-medium text-slate-700 dark:text-slate-300">Apellido</label>
+          <input pInputText id="apellido" formControlName="apellido" placeholder="Apellido" class="w-full" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="email" class="text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+          <input pInputText id="email" type="email" formControlName="email" placeholder="usuario@ejemplo.com" class="w-full" />
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <small class="text-red-500">Email inválido</small>
+          }
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="cuil" class="text-sm font-medium text-slate-700 dark:text-slate-300">CUIL</label>
+          <input pInputText id="cuil" formControlName="cuil" placeholder="XX-XXXXXXXX-X" class="w-full" />
+        </div>
       </div>
 
       <div class="flex flex-col gap-1.5">

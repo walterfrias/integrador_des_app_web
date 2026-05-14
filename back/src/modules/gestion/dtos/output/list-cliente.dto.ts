@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EstadosClientesEnum } from '../../enums/estados-clientes.enum';
 
 export class ListClienteDTO {
@@ -7,6 +7,12 @@ export class ListClienteDTO {
 
   @ApiProperty()
   nombre!: string;
+
+  @ApiPropertyOptional()
+  cuit!: string | null;
+
+  @ApiPropertyOptional()
+  direccion!: string | null;
 
   @ApiProperty()
   estado!: EstadosClientesEnum;

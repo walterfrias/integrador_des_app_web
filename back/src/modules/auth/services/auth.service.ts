@@ -18,7 +18,7 @@ export class AuthService {
     const usuario = await this.usuarioRepository
       .createQueryBuilder('u')
       .addSelect('u.clave')
-      .where('u.nombre = :nombre', { nombre: dto.nombre })
+      .where('u.email = :email', { email: dto.email })
       .getOne();
 
     if (!usuario) throw new UnauthorizedException('Credenciales inválidas');
