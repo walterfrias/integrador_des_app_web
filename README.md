@@ -124,5 +124,5 @@ Cada push a `main` deploya automáticamente.
 ## Flujo de ramas
 
 ```
-walter / [rama-compañero] → develop → main
+develop / [rama-compañero] → develop → main
 ```
