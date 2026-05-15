@@ -8,7 +8,7 @@ Stack: NestJS + Angular + PostgreSQL
 ## Requisitos
 
 - Node.js 20+
-- Docker y Docker Compose
+- Docker (Opcional)
 - npm
 
 ---
