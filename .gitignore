@@ -145,6 +145,9 @@ ingenieria/consignas/
 # Compodoc generated documentation
 back/documentation/
 
+# Claude Code
+CLAUDE.md
+
 # Variables de environnement
 .env
 .env.*

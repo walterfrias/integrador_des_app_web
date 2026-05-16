@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Cliente } from './cliente.entity';
 import { Tarea } from './tarea.entity';
+import { AsignacionProyecto } from './asignacion-proyecto.entity';
 
 export enum EstadoProyecto {
   ACTIVO = 'ACTIVO',
@@ -33,4 +34,7 @@ export class Proyecto {
 
   @OneToMany(() => Tarea, (tarea) => tarea.proyecto, { cascade: true })
   tareas!: Tarea[];
+
+  @OneToMany(() => AsignacionProyecto, (asignacion) => asignacion.proyecto)
+  asignaciones!: AsignacionProyecto[];
 }

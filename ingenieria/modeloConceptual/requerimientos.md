@@ -74,6 +74,14 @@
 | RF26  | Exportar proyectos a CSV | Permite descargar el listado de proyectos (con estado y cliente) en formato CSV. |
 | RF27  | Exportar tareas a CSV    | Permite descargar el listado de tareas de un proyecto en formato CSV. |
 
+### E08 — Asignación de usuarios a proyectos
+
+| ID    | Nombre                        | Descripción |
+|-------|-------------------------------|-------------|
+| RF28  | Asignar usuario a proyecto    | Permite asignar un usuario activo a un proyecto. Si el usuario ya tenía una asignación dada de baja para ese proyecto, se reactiva en lugar de crear un registro nuevo. |
+| RF29  | Listar asignaciones           | Muestra todas las asignaciones registradas. Permite filtrar por proyecto para ver qué usuarios están asignados a uno específico, con su estado y fecha de asignación. |
+| RF30  | Dar de baja asignación        | Permite cambiar el estado de una asignación a "Baja", desvinculando al usuario del proyecto sin eliminar el registro histórico. |
+
 ---
 
 ## 2. Restricciones
@@ -88,6 +96,7 @@
 | R06  | Solo usuarios con rol Admin pueden dar de baja proyectos y tareas. |
 | R07  | Un usuario no puede darse de baja a sí mismo. |
 | R08  | La fecha límite de un proyecto, si se define, debe ser una fecha futura al momento de su creación. |
+| R09  | Un usuario solo puede tener una asignación activa por proyecto. Si se intenta asignar un usuario ya activo en el mismo proyecto, el sistema rechaza la operación. |
 
 ---
 

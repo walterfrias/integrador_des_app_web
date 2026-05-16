@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { AsignacionProyecto } from '../../gestion/entities/asignacion-proyecto.entity';
 
 export enum RolUsuario {
   ADMIN = 'ADMIN',
@@ -18,6 +19,15 @@ export class Usuario {
   @Column({ unique: true })
   nombre!: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  apellido!: string | null;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  email!: string | null;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  cuil!: string | null;
+
   @Column({ select: false })
   clave!: string;
 
@@ -26,4 +36,7 @@ export class Usuario {
 
   @Column({ type: 'enum', enum: EstadoUsuario, default: EstadoUsuario.ACTIVO })
   estado!: EstadoUsuario;
+
+  @OneToMany(() => AsignacionProyecto, (asignacion) => asignacion.usuario)
+  asignaciones!: AsignacionProyecto[];
 }

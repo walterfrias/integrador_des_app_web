@@ -11,6 +11,12 @@ export class Cliente {
   @Column({ unique: true })
   nombre!: string;
 
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  cuit!: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  direccion!: string | null;
+
   @Column({ type: 'enum', enum: EstadosClientesEnum, default: EstadosClientesEnum.ACTIVO })
   estado!: EstadosClientesEnum;
 

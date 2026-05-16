@@ -24,6 +24,12 @@ export class UsuariosController {
     return this.usuariosService.listar();
   }
 
+  @ApiOkResponse({ type: ListUsuarioDto })
+  @Get(':id')
+  async obtenerPorId(@Param('id', ParseIntPipe) id: number): Promise<ListUsuarioDto> {
+    return this.usuariosService.obtenerPorId(id);
+  }
+
   @Post()
   async crear(@Body() dto: CreateUsuarioDto): Promise<{ id: number }> {
     return this.usuariosService.crear(dto);

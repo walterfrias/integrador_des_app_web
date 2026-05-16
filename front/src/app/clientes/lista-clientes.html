@@ -1,0 +1,62 @@
+<p-confirmDialog />
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100">Clientes</h2>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestión de clientes</p>
+  </div>
+  <a
+    routerLink="nuevo"
+    class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-150"
+  >
+    <span class="pi pi-plus"></span>
+    Nuevo cliente
+  </a>
+</div>
+
+<div class="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+  <p-table
+    [value]="clientes()"
+    [loading]="loading()"
+    [paginator]="true"
+    [rows]="10"
+    styleClass="p-datatable-sm"
+  >
+    <ng-template #header>
+      <tr>
+        <th class="text-slate-600 dark:text-slate-300">Nombre</th>
+        <th class="text-slate-600 dark:text-slate-300">CUIT</th>
+        <th class="text-slate-600 dark:text-slate-300">Dirección</th>
+        <th class="text-slate-600 dark:text-slate-300">Estado</th>
+        <th class="text-slate-600 dark:text-slate-300 text-right">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-cliente>
+      <tr>
+        <td class="font-medium text-slate-800 dark:text-slate-100">{{ cliente.nombre }}</td>
+        <td class="text-slate-600 dark:text-slate-400 text-sm">{{ cliente.cuit ?? '—' }}</td>
+        <td class="text-slate-600 dark:text-slate-400 text-sm">{{ cliente.direccion ?? '—' }}</td>
+        <td>
+          <p-tag [value]="cliente.estado" [severity]="severidadEstado(cliente.estado)" />
+        </td>
+        <td class="text-right">
+          <div class="flex items-center justify-end gap-2">
+            <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[cliente.id, 'editar']"></button>
+            @if (cliente.estado === 'ACTIVO') {
+              <button pButton icon="pi pi-ban" severity="danger" text size="small" (click)="confirmarBaja(cliente)"></button>
+            } @else {
+              <button pButton icon="pi pi-check-circle" severity="success" text size="small" (click)="reactivar(cliente.id)"></button>
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #empty>
+      <tr>
+        <td colspan="5" class="text-center text-slate-400 dark:text-slate-500 py-8">No hay clientes registrados</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
