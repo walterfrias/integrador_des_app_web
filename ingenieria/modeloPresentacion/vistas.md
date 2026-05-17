@@ -18,7 +18,7 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 │         GESTIÓN DE PROYECTOS            │
 │                                         │
 │         ┌───────────────────────┐       │
-│  Usuario │                       │       │
+│  Email  │                       │       │
 │         └───────────────────────┘       │
 │                                         │
 │         ┌───────────────────────┐       │
@@ -33,8 +33,8 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 ```
 
 **Componentes:**
-- Campo texto: nombre de usuario
-- Campo password: clave
+- Campo email: dirección de correo electrónico del usuario
+- Campo password: clave (con toggle mostrar/ocultar)
 - Botón: Ingresar
 - Área de mensaje: error de autenticación
 
@@ -137,8 +137,9 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 - Botón: Editar Proyecto (enlace EN06)
 - Toggle de vista: Tabla / Kanban (RF21)
 - Botón: Exportar tareas CSV (RF27)
-- Tabla de tareas: descripción, estado, botón Editar (enlace EN08), botón Eliminar (solo Admin, RF12 — R06)
+- Tabla de tareas: descripción, estado, responsable, botón Editar (enlace EN08), botón Eliminar (solo Admin, RF12 — R06)
 - Botón: Agregar tarea (enlace EN07)
+- Sección Asignaciones (E08): tabla con usuario, estado, fecha de asignación + botón Asignar usuario + botón Dar de baja asignación
 
 ---
 
@@ -253,6 +254,12 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 │  Nombre     ┌───────────────────────────────┐               │
 │             └───────────────────────────────┘               │
 │                                                             │
+│  CUIT       ┌───────────────────────────────┐  (opcional)   │
+│             └───────────────────────────────┘               │
+│                                                             │
+│  Dirección  ┌───────────────────────────────┐  (opcional)   │
+│             └───────────────────────────────┘               │
+│                                                             │
 │  Estado     ┌───────────────────────────────┐               │
 │             │ Activo ▾                       │               │
 │             └───────────────────────────────┘               │
@@ -274,6 +281,8 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 
 **Componentes:**
 - Campo texto: nombre del cliente
+- Campo texto: CUIT (único, opcional)
+- Campo texto: dirección (opcional)
 - Select: estado (Activo / Baja) — con validación de restricción R02
 - Mensaje de advertencia: si el cliente tiene proyectos, Baja está deshabilitado
 - Tabla de contactos: tipo, valor, botones Editar y Eliminar (RF23, RF24, RF25)
@@ -303,6 +312,11 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 │             │ Pendiente ▾                    │               │
 │             └───────────────────────────────┘               │
 │                                                             │
+│  Responsable ┌──────────────────────────────┐  [X Quitar]   │
+│              │ (Sin asignar) ▾               │               │
+│              └──────────────────────────────┘               │
+│              ℹ Solo usuarios en estado Activo (R10)         │
+│                                                             │
 │                  [Guardar]   [Cancelar]                     │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -311,6 +325,8 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 - Referencia (solo lectura): nombre del proyecto al que pertenece
 - Campo texto (área): descripción de la tarea
 - Select: estado (Pendiente / Finalizada / Baja)
+- Select: responsable — lista de usuarios activos + opción "Sin asignar" (RF31, RF32 — R10)
+- Botón X: quitar responsable (visible solo si hay uno asignado)
 - Botón: Guardar (enlace EN13)
 - Botón: Cancelar (enlace EN13)
 
@@ -325,18 +341,18 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 │  GESTIÓN DE PROYECTOS              👤 admin (Admin) | [Salir]│
 ├─────────────────────────────────────────────────────────────┤
 │  Usuarios                              [+ Nuevo Usuario]    │
-├──────────────────────┬────────────┬──────────┬─────────────┤
-│  Nombre ↑↓           │  Rol ↑↓    │  Estado  │  Acciones   │
-├──────────────────────┼────────────┼──────────┼─────────────┤
-│  admin               │  Admin     │  Activo  │  [Editar]   │
-│  usuario             │  Operador  │  Activo  │  [Editar]   │
-│  jperez              │  Operador  │  Baja    │  [Editar]   │
-└──────────────────────┴────────────┴──────────┴─────────────┘
+├──────────────┬───────────────────┬────────────┬──────────┬──────────┤
+│  Nombre ↑↓  │  Email ↑↓         │  Rol ↑↓    │  Estado  │  Acciones│
+├──────────────┼───────────────────┼────────────┼──────────┼──────────┤
+│  Juan Pérez  │  j@empresa.com    │  Admin     │  Activo  │  [Editar]│
+│  Ana García  │  a@empresa.com    │  Operador  │  Activo  │  [Editar]│
+│  Carlos Ruiz │  c@empresa.com    │  Operador  │  Baja    │  [Editar]│
+└──────────────┴───────────────────┴────────────┴──────────┴──────────┘
 ```
 
 **Componentes:**
 - Botón: Nuevo Usuario (enlace EN16)
-- Tabla: nombre, rol, estado, botón Editar (enlace EN17). Columnas ordenables.
+- Tabla: nombre, email, rol, estado, botón Editar (enlace EN17). Columnas ordenables.
 - Nota: un usuario no puede darse de baja a sí mismo (restricción R07)
 
 ---
@@ -351,8 +367,13 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 ├─────────────────────────────────────────────────────────────┤
 │  Nuevo Usuario / Editar Usuario                             │
 │                                                             │
-│  Nombre     ┌───────────────────────────────┐               │
-│             └───────────────────────────────┘               │
+│  ┌─────────────────────────┐ ┌─────────────────────────┐    │
+│  │ Nombre  [____________]  │ │ Apellido [____________]  │    │
+│  └─────────────────────────┘ └─────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────┐ ┌─────────────────────────┐    │
+│  │ Email   [____________]  │ │ CUIL    [____________]   │    │
+│  └─────────────────────────┘ └─────────────────────────┘    │
 │                                                             │
 │  Clave      ┌───────────────────────────────┐               │
 │             └───────────────────────────────┘               │
@@ -373,6 +394,9 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 
 **Componentes:**
 - Campo texto: nombre de usuario
+- Campo texto: apellido
+- Campo email: dirección de email (único por usuario)
+- Campo texto: CUIL (único, opcional)
 - Campo password: clave (opcional en edición)
 - Select: rol (Admin / Operador)
 - Select: estado (Activo / Baja) — con validación de restricción R07
@@ -384,16 +408,16 @@ Las representaciones son wireframes textuales (bocetos de estructura).
 
 ## Resumen de correspondencia
 
-| Vista  | Contexto | RF cubiertos                        | Expansión     |
-|--------|----------|-------------------------------------|---------------|
-| V01    | CN01     | RF01                                | —             |
-| V02    | CN02     | RF20                                | E01, E03      |
-| V03    | CN03     | RF02, RF17, RF22, RF26              | E02, E05, E07 |
-| V04    | CN04     | RF05, RF12, RF21, RF27              | E01, E04, E07 |
-| V04b   | CN04     | RF21                                | E04           |
-| V05    | CN05     | RF03, RF04                          | E05           |
-| V06    | CN06     | RF06, RF09, RF18                    | E02           |
-| V07    | CN07     | RF07, RF08, RF23, RF24, RF25        | E06           |
-| V08    | CN08     | RF10, RF11                          | —             |
-| V09    | CN09     | RF13, RF16                          | E01           |
-| V10    | CN10     | RF14, RF15                          | E01           |
+| Vista  | Contexto | RF cubiertos                        | Expansión          |
+|--------|----------|-------------------------------------|--------------------|
+| V01    | CN01     | RF01                                | —                  |
+| V02    | CN02     | RF20                                | E01, E03           |
+| V03    | CN03     | RF02, RF17, RF22, RF26              | E02, E05, E07      |
+| V04    | CN04     | RF05, RF12, RF21, RF27, RF28, RF29, RF30 | E01, E04, E07, E08 |
+| V04b   | CN04     | RF21                                | E04                |
+| V05    | CN05     | RF03, RF04                          | E05                |
+| V06    | CN06     | RF06, RF09, RF18                    | E02                |
+| V07    | CN07     | RF07, RF08, RF23, RF24, RF25        | E06                |
+| V08    | CN08     | RF10, RF11, RF31, RF32              | E09                |
+| V09    | CN09     | RF13, RF16                          | E01                |
+| V10    | CN10     | RF14, RF15                          | E01                |
