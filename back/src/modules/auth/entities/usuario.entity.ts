@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AsignacionProyecto } from '../../gestion/entities/asignacion-proyecto.entity';
+import { Tarea } from '../../gestion/entities/tarea.entity';
 
 export enum RolUsuario {
   ADMIN = 'ADMIN',
@@ -39,4 +40,7 @@ export class Usuario {
 
   @OneToMany(() => AsignacionProyecto, (asignacion) => asignacion.usuario)
   asignaciones!: AsignacionProyecto[];
+
+  @OneToMany(() => Tarea, (tarea) => tarea.responsable)
+  tareas!: Tarea[];
 }

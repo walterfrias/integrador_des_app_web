@@ -11,14 +11,14 @@
 
 | ID    | Nombre                  | Descripción |
 |-------|-------------------------|-------------|
-| RF01  | Autenticar usuario      | El sistema permite el ingreso mediante nombre de usuario y clave. Solo usuarios en estado "Activo" pueden acceder. |
+| RF01  | Autenticar usuario      | El sistema permite el ingreso mediante email y clave. Solo usuarios en estado "Activo" pueden acceder. |
 | RF02  | Listar proyectos        | El sistema muestra todos los proyectos registrados con su nombre, estado e indicador de retraso. |
 | RF03  | Crear proyecto          | Permite crear un proyecto indicando nombre, estado, fecha límite opcional y opcionalmente un cliente en estado "Activo". |
 | RF04  | Modificar proyecto      | Permite editar el nombre, estado, fecha límite y cliente de un proyecto existente. |
 | RF05  | Ver detalle de proyecto | Muestra el detalle de un proyecto: cliente asociado, fecha límite y lista de tareas. |
 | RF06  | Listar clientes         | El sistema muestra todos los clientes registrados con su nombre y estado. |
-| RF07  | Crear cliente           | Permite registrar un cliente con nombre, estado y datos de contacto opcionales. |
-| RF08  | Modificar cliente       | Permite editar el nombre, estado y datos de contacto de un cliente existente. |
+| RF07  | Crear cliente           | Permite registrar un cliente con nombre, cuit (opcional), dirección (opcional), estado y datos de contacto opcionales. |
+| RF08  | Modificar cliente       | Permite editar el nombre, cuit, dirección, estado y datos de contacto de un cliente existente. |
 | RF09  | Dar de baja cliente     | Permite dar de baja un cliente, siempre que no esté asociado a ningún proyecto. |
 | RF10  | Agregar tarea           | Dado un proyecto existente, permite agregar una tarea con descripción y estado. |
 | RF11  | Modificar tarea         | Permite editar la descripción y el estado de una tarea. |
@@ -28,9 +28,9 @@
 
 | ID    | Nombre                  | Descripción |
 |-------|-------------------------|-------------|
-| RF13  | Listar usuarios         | El sistema muestra todos los usuarios registrados con su nombre, rol y estado. Solo accesible para usuarios con rol Admin. |
-| RF14  | Crear usuario           | Permite registrar un nuevo usuario con nombre, clave, rol y estado. Solo accesible para usuarios con rol Admin. |
-| RF15  | Modificar usuario       | Permite editar el nombre, clave, rol y estado de un usuario existente. Solo accesible para usuarios con rol Admin. |
+| RF13  | Listar usuarios         | El sistema muestra todos los usuarios registrados con su nombre, apellido, email, rol y estado. Solo accesible para usuarios con rol Admin. |
+| RF14  | Crear usuario           | Permite registrar un nuevo usuario con nombre, apellido, email, cuil, clave, rol y estado. Solo accesible para usuarios con rol Admin. |
+| RF15  | Modificar usuario       | Permite editar el nombre, apellido, email, cuil, clave, rol y estado de un usuario existente. Solo accesible para usuarios con rol Admin. |
 | RF16  | Dar de baja usuario     | Permite dar de baja un usuario. Solo accesible para usuarios con rol Admin. Un usuario no puede darse de baja a sí mismo. |
 
 ### E02 — Búsqueda avanzada
@@ -82,6 +82,14 @@
 | RF29  | Listar asignaciones           | Muestra todas las asignaciones registradas. Permite filtrar por proyecto para ver qué usuarios están asignados a uno específico, con su estado y fecha de asignación. |
 | RF30  | Dar de baja asignación        | Permite cambiar el estado de una asignación a "Baja", desvinculando al usuario del proyecto sin eliminar el registro histórico. |
 
+### E09 — Responsable de tarea
+
+| ID    | Nombre                        | Descripción |
+|-------|-------------------------------|-------------|
+| RF31  | Asignar responsable a tarea   | Permite asignar un usuario activo como responsable de una tarea. Si la tarea ya tiene responsable, lo reemplaza. |
+| RF32  | Quitar responsable de tarea   | Permite desvincular al responsable de una tarea, dejándola sin asignar. |
+| RF33  | Filtrar tareas por responsable | Permite filtrar las tareas de un proyecto por el usuario responsable asignado. |
+
 ---
 
 ## 2. Restricciones
@@ -97,6 +105,7 @@
 | R07  | Un usuario no puede darse de baja a sí mismo. |
 | R08  | La fecha límite de un proyecto, si se define, debe ser una fecha futura al momento de su creación. |
 | R09  | Un usuario solo puede tener una asignación activa por proyecto. Si se intenta asignar un usuario ya activo en el mismo proyecto, el sistema rechaza la operación. |
+| R10  | Solo se puede asignar como responsable de una tarea un usuario en estado "Activo". |
 
 ---
 

@@ -31,7 +31,7 @@ El sistema permite gestionar proyectos, los clientes a los que pertenecen, y las
 
 | ID | Descripción | Estado |
 |----|-------------|--------|
-| RF01 | Autenticar usuario con nombre y clave. Solo usuarios Activos pueden ingresar. | ⚙️ |
+| RF01 | Autenticar usuario con nombre y clave. Solo usuarios Activos pueden ingresar. | ✅ |
 
 ---
 
@@ -50,9 +50,9 @@ El sistema permite gestionar proyectos, los clientes a los que pertenecen, y las
 
 | ID | Descripción | Estado |
 |----|-------------|--------|
-| RF06 | Listar todos los clientes con nombre y estado. | ⚙️ |
-| RF07 | Crear cliente con nombre y estado. | ⚙️ |
-| RF08 | Modificar nombre, estado y datos de contacto de un cliente. | ⚙️ |
+| RF06 | Listar todos los clientes con nombre y estado. | ✅ |
+| RF07 | Crear cliente con nombre y estado. | ✅ |
+| RF08 | Modificar nombre, estado y datos de contacto de un cliente. | ✅ |
 | RF09 | Dar de baja un cliente, solo si no está asociado a ningún proyecto (R02). | 🔧 |
 
 ---
@@ -90,10 +90,10 @@ Limita ciertas funcionalidades a usuarios con rol Admin: gestión de usuarios, b
 
 | ID | Descripción | Estado |
 |----|-------------|--------|
-| RF13 | Listar usuarios (solo Admin). | ⚙️ |
-| RF14 | Crear usuario con nombre, clave, rol y estado (solo Admin). | ⚙️ |
-| RF15 | Modificar usuario existente (solo Admin). | ⚙️ |
-| RF16 | Dar de baja usuario. No puede darse de baja a sí mismo (solo Admin). | ⚙️ |
+| RF13 | Listar usuarios (solo Admin). | ✅ |
+| RF14 | Crear usuario con nombre, clave, rol y estado (solo Admin). | ✅ |
+| RF15 | Modificar usuario existente (solo Admin). | ✅ |
+| RF16 | Dar de baja usuario. No puede darse de baja a sí mismo (solo Admin). | ✅ |
 
 **Restricciones adicionales:**
 
@@ -173,6 +173,42 @@ Descarga de listados en formato CSV desde el frontend.
 |----|-------------|--------|
 | RF26 | Exportar listado de proyectos (con estado y cliente) a CSV. | ❌ |
 | RF27 | Exportar listado de tareas de un proyecto a CSV. | ❌ |
+
+---
+
+### E08 — Asignación de usuarios a proyectos (RF28–RF30)
+
+Permite vincular usuarios activos a un proyecto con estado y fecha de asignación. La baja es lógica (no elimina el registro histórico).
+
+| ID | Descripción | Estado |
+|----|-------------|--------|
+| RF28 | Asignar usuario activo a un proyecto. Si tenía asignación en Baja, se reactiva. | ❌ |
+| RF29 | Listar asignaciones. Filtrar por proyecto para ver usuarios asignados, estado y fecha. | ❌ |
+| RF30 | Dar de baja asignación: cambia estado a Baja sin eliminar el registro. | ❌ |
+
+**Restricción adicional:**
+
+| ID | Descripción | Estado |
+|----|-------------|--------|
+| R09 | Un usuario solo puede tener una asignación activa por proyecto. Si ya está activo, se rechaza la operación. | ❌ Sin validar |
+
+---
+
+### E09 — Responsable de tarea (RF31–RF33)
+
+Permite asignar un usuario activo como responsable de una tarea. La asignación no implica propiedad ni restricción de visibilidad (R03, R04). Si el usuario responsable se da de baja, el campo queda en null automáticamente (ON DELETE SET NULL).
+
+| ID | Descripción | Estado |
+|----|-------------|--------|
+| RF31 | Asignar un usuario activo como responsable de una tarea. Si ya tenía responsable, lo reemplaza. | ❌ |
+| RF32 | Quitar responsable de una tarea, dejándola sin asignar. | ❌ |
+| RF33 | Filtrar tareas de un proyecto por responsable asignado. | ❌ |
+
+**Restricción adicional:**
+
+| ID | Descripción | Estado |
+|----|-------------|--------|
+| R10 | Solo se puede asignar como responsable un usuario en estado Activo. | ❌ Sin validar |
 
 ---
 
