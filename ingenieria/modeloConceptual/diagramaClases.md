@@ -39,6 +39,8 @@ classDiagram
     class Tarea {
         +String descripcion
         +EstadoTarea estado
+        +Date fechaCreacion
+        +Date fechaActualizacion
     }
     class Contacto {
         +TipoContacto tipo
