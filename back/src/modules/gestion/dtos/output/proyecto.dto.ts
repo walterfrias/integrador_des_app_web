@@ -5,6 +5,9 @@ import { ListTareaDTO } from './list-tarea.dto';
 
 export class ProyectoDTO {
   @ApiProperty()
+  id!: number;
+
+  @ApiProperty()
   nombre!: string;
 
   @ApiProperty()

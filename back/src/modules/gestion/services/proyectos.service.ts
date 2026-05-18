@@ -14,6 +14,7 @@ import { ListProyectoDTO } from '../dtos/output/list-proyecto.dto';
 import { ProyectoDTO } from '../dtos/output/proyecto.dto';
 import { EstadosClientesEnum } from '../enums/estados-clientes.enum';
 import { EstadosProyectosEnum } from '../enums/estados-proyectos.enum';
+import { EstadosTareasEnum } from '../enums/estados-tareas.enum';
 
 @Injectable()
 export class ProyectosService {
@@ -24,7 +25,7 @@ export class ProyectosService {
         private readonly clienteRepository: Repository<Cliente>,
     ) { }
     async listar(estado?: EstadosProyectosEnum): Promise<ListProyectoDTO[]> {
-        const where = estado ? { estado: estado as EstadoProyecto } : {};
+        const where = estado ? { estado: estado as unknown as EstadoProyecto } : {};
         const proyectos = await this.proyectoRepository.find({
             where,
             relations: { cliente: true },
@@ -56,7 +57,7 @@ export class ProyectosService {
         }
         const proyecto = this.proyectoRepository.create({
             nombre: dto.nombre,
-            estado: (dto.estado ?? EstadosProyectosEnum.ACTIVO) as EstadoProyecto,
+            estado: (dto.estado ?? EstadosProyectosEnum.ACTIVO) as unknown as EstadoProyecto,
             fechaLimite: dto.fechaLimite ?? null,
             cliente: dto.idCliente ? ({ id: dto.idCliente } as Cliente) : null,
         });
@@ -80,7 +81,7 @@ export class ProyectosService {
         }
         const updateData: Partial<Proyecto> = {};
         if (dto.nombre !== undefined) updateData.nombre = dto.nombre;
-        if (dto.estado !== undefined) updateData.estado = dto.estado as EstadoProyecto;
+        if (dto.estado !== undefined) updateData.estado = dto.estado as unknown as EstadoProyecto;
         if (dto.fechaLimite !== undefined) updateData.fechaLimite = dto.fechaLimite;
         if (dto.idCliente !== undefined) {
             updateData.cliente = dto.idCliente ? ({ id: dto.idCliente } as Cliente) : null;
@@ -111,7 +112,7 @@ export class ProyectosService {
             tareas: proyecto.tareas.map((t) => ({
                 id: t.id,
                 descripcion: t.descripcion,
-                estado: t.estado,
+                estado: t.estado as unknown as EstadosTareasEnum,
                 fechaCreacion: t.fechaCreacion,
                 fechaActualizacion: t.fechaActualizacion,
                 responsable: t.responsable
