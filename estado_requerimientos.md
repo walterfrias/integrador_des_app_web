@@ -1,6 +1,6 @@
 # Estado de Requerimientos — Sistema de Gestión de Proyectos
 **UNER — Ingeniería de Software**  
-**Fecha:** 14/05/2026
+**Fecha:** 19/05/2026
 
 ---
 
@@ -42,7 +42,7 @@
 
 | RF | Descripción | Estado |
 |---|---|---|
-| RF20 | Estadísticas dashboard | ❌ Pendiente |
+| RF20 | Estadísticas dashboard | ✅ Completo |
 
 ## E04 — Panel Kanban
 
@@ -54,7 +54,7 @@
 
 | RF | Descripción | Estado |
 |---|---|---|
-| RF22 | Visualizar proyectos retrasados | ❌ Pendiente |
+| RF22 | Visualizar proyectos retrasados | ⚠️ Parcial (dato en dashboard, falta listado) |
 
 ## E06 — Contacto de clientes
 
@@ -75,9 +75,9 @@
 
 | RF | Descripción | Estado |
 |---|---|---|
-| RF28 | Asignar usuario a proyecto | ❌ Pendiente |
-| RF29 | Listar asignaciones | ❌ Pendiente |
-| RF30 | Dar de baja asignación | ❌ Pendiente |
+| RF28 | Asignar usuario a proyecto | ⚠️ Parcial (backend completo, falta frontend) |
+| RF29 | Listar asignaciones | ⚠️ Parcial (backend completo, falta frontend) |
+| RF30 | Dar de baja asignación | ⚠️ Parcial (backend completo, falta frontend) |
 
 ## E09 — Responsable de tarea
 
@@ -93,12 +93,17 @@
 
 | Área | Responsable | Estado |
 |---|---|---|
-| Auth + Usuarios (E01) | Walter | ✅ 100% completo |
-| Clientes base (RF06-RF09) | Walter | ✅ 100% completo |
-| Proyectos + Tareas (RF02-RF12) | — | ❌ 0% completo |
-| Asignación usuarios a proyectos (E08) | — | ❌ 0% completo |
-| Responsable de tarea (E09) | — | ❌ 0% completo |
-| Pendiente total | — | ~65% restante |
+| Auth + Usuarios (E01) | Integrante 1 | ✅ 100% completo |
+| Clientes base (RF06-RF09) | Integrante 1 | ✅ 100% completo |
+| Estadísticas dashboard (RF20) | Integrante 5 | ✅ 100% completo |
+| Asignaciones backend (RF28-RF30) | Integrante 5 | ✅ Backend completo |
+| Asignaciones frontend (RF28-RF30) | Integrante 5 | ❌ Pendiente |
+| Proyectos + Tareas (RF02-RF12) | Integrantes 3 y 4 | ❌ 0% completo |
+| Responsable de tarea (E09) | Integrante 4 | ❌ 0% completo |
+| Búsqueda avanzada (E02) | Integrante 5 | ❌ Pendiente |
+| Exportación CSV (E07) | Integrante 5 | ❌ Pendiente |
+| Contactos de clientes (E06) | Integrante 2 | ❌ 0% completo |
+| Pendiente total | — | ~55% restante |
 
 ---
 
@@ -112,7 +117,9 @@
 | Integrante 4 | Tareas + Kanban + Responsable | RF10-RF12, RF21, RF31-RF33 |
 | Integrante 5 | Asignaciones + Búsqueda + Stats + CSV | RF28-RF30, RF17-RF20, RF26-RF27 |
 
-> **Atención:** Integrante 5 depende de que los demás terminen primero.
+> **Nota:** Integrante 5 tiene RF20 y el backend de RF28-RF30 completos.
+> El frontend de RF28-RF30 depende de que Int. 3 tenga listo `detalle-proyecto.ts`.
+> RF17-RF19 (filtros) depende de que los listados de proyectos y tareas existan.
 
 ---
 

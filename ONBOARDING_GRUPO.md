@@ -38,7 +38,7 @@ PORT=3000
 ```bash
 npm install
 npm run migration:run   # aplica las migraciones existentes
-npm run seed            # carga datos de prueba
+npm run seed            # carga datos de prueba (50 clientes, 20 proyectos, 51 tareas, 42 asignaciones)
 npm run start:dev       # backend en localhost:3000
 ```
 
@@ -50,8 +50,18 @@ npm start               # Angular en localhost:4200 con proxy a localhost:3000
 ```
 
 ### 5. Verificar que todo funciona
-Abrí `http://localhost:4200` → debería aparecer el login.  
-Usuario de prueba (cargado por seed): ver `back/src/seeds/`.
+Abrí `http://localhost:4200` → debería aparecer el login.
+
+**Usuarios cargados por el seed:**
+
+| Email | Contraseña | Rol |
+|---|---|---|
+| admin@admin.com | adminintegrador | ADMIN |
+| operador@prueba.com | operadorintegrador | OPERADOR |
+| walter@prueba.com | walterintegrador | OPERADOR |
+| lucia@prueba.com | luciaintegrador | OPERADOR |
+| martin@prueba.com | martinintegrador | OPERADOR |
+| sofia@prueba.com | sofiaintegrador | OPERADOR |
 
 ---
 
@@ -91,12 +101,14 @@ back/src/modules/
 | Auth (login) | ✅ completo | ✅ completo |
 | Usuarios (RF13-RF16) | ✅ completo | ✅ completo |
 | Clientes (RF06-RF09) | ✅ completo | ✅ completo |
-| Proyectos (RF02-RF05) | ⚠️ controller existe, falta service | ❌ pendiente |
+| Estadísticas dashboard (RF20) | ✅ completo | ✅ completo |
+| Asignaciones (RF28-RF30) | ✅ completo | ❌ pendiente |
+| Proyectos (RF02-RF05, RF22) | ⚠️ controller existe, falta service | ❌ pendiente |
 | Tareas (RF10-RF12) | ⚠️ controller existe, falta service | ❌ pendiente |
 | Responsable de tarea (RF31-RF33) | ❌ pendiente | ❌ pendiente |
 | Contactos (RF23-RF25) | ⚠️ entidad existe, falta controller+service | ❌ pendiente |
-| Asignación usuarios a proyectos (RF28-RF30) | ❌ pendiente | ❌ pendiente |
-| Búsqueda/Stats/CSV (RF17-RF20, RF26-RF27) | ❌ pendiente | ❌ pendiente |
+| Filtros y paginación (RF17-RF19) | ❌ pendiente | ❌ pendiente |
+| Exportación CSV (RF26-RF27) | ❌ pendiente | ❌ pendiente |
 
 ---
 
@@ -148,7 +160,7 @@ back/src/modules/
    - `/app/proyectos/nuevo` → `form-proyecto.ts`
    - `/app/proyectos/:id/editar` → `form-proyecto.ts`
    - `/app/proyectos/:id` → `detalle-proyecto.ts`
-6. Agregar ítem en el sidebar (`main-layout`)
+6. Agregar ítem en el sidebar (`layout/main-layout.ts`)
 
 **Referencia:** mirá `lista-clientes.ts` y `form-cliente.ts` como modelo exacto.
 
@@ -169,7 +181,7 @@ back/src/modules/
 3. Rutas anidadas bajo proyecto: `POST /proyectos/:id/tareas`, `PUT /proyectos/:id/tareas/:tareaId`, `DELETE /proyectos/:id/tareas/:tareaId`
 
 *Backend — Responsable (RF31-RF33):*
-4. En el service: método `asignarResponsable(tareaId, usuarioId)` — validar que el usuario esté Activo (R10)
+4. En el service: método `asignarResponsable(tareaId, usuarioId)` — validar que el usuario esté Activo
 5. Método `quitarResponsable(tareaId)` — setea `usuario_id = null`
 6. En el listado: soporte para filtro `?responsableId=` (RF33)
 7. Endpoints sugeridos: `PATCH /proyectos/:id/tareas/:tareaId/responsable` y `DELETE /proyectos/:id/tareas/:tareaId/responsable`
@@ -184,30 +196,29 @@ back/src/modules/
 
 ---
 
-### Integrante 5 — Asignaciones + Búsqueda, Estadísticas y CSV (RF28-RF30, RF17-RF20, RF26, RF27)
+### Integrante 5 — Asignaciones frontend + Búsqueda + CSV (RF28-RF30, RF17-RF19, RF26, RF27)
 
-**Importante:** este módulo depende de que Proyectos y Tareas estén completos. Podés preparar la estructura mientras esperás.
+**Qué hay hecho:**
+- Backend RF28-RF30 completo: `GET/POST /asignaciones`, `PUT /asignaciones/:id` ✅
+- RF20 completo: `GET /api/v1/stats` + dashboard con gráficos ✅
 
-**Qué tenés que hacer:**
+**Qué falta:**
 
-*RF28-RF30 — Asignación de usuarios a proyectos:*
-- Entidad `AsignacionProyecto` con campos `estado` (Activo/Baja) y `fechaAsignacion`
-- Backend: `POST /proyectos/:id/asignaciones`, `GET /proyectos/:id/asignaciones`, `DELETE /proyectos/:id/asignaciones/:asignacionId`
-- Validar R09: un usuario solo puede tener una asignación activa por proyecto (si ya existe activa, rechazar)
-- Si existía una asignación en Baja para el mismo usuario+proyecto, reactivarla en lugar de crear una nueva
-- Frontend: las asignaciones van dentro de `detalle-proyecto.ts` que crea Int. 3 — buscá el comentario `<!-- ASIGNACIONES -->` y agregá la sección ahí
+*RF28-RF30 — Frontend asignaciones:*
+- Las asignaciones van dentro de `detalle-proyecto.ts` que crea Int. 3
+- Buscá el comentario `<!-- ASIGNACIONES -->` y agregá la sección ahí
+- Crear `front/src/app/core/services/asignaciones.service.ts`
+- Mostrar lista de usuarios asignados con botón para dar de baja
+- Selector para agregar nuevo usuario al proyecto
 
 *RF17-RF19 — Filtros y paginación:*
 - Backend: agregar parámetros `?nombre=&estado=&page=&limit=` en los services de proyectos, clientes y tareas
 - Frontend: agregar inputs de filtro y paginador en las listas existentes (PrimeNG tiene `p-paginator`)
-
-*RF20 — Estadísticas del dashboard:*
-- Backend: endpoint `GET /api/v1/stats` con conteos (proyectos activos, tareas pendientes, clientes activos)
-- Frontend: `dashboard.ts` ya existe, completar con las métricas reales
+- **Depende de que Int. 3 e Int. 4 tengan los listados listos**
 
 *RF26-RF27 — Exportación CSV:*
-- Backend: endpoint que devuelve CSV con header `Content-Type: text/csv`
-- Frontend: botón "Exportar CSV" que descarga el archivo
+- Backend: endpoint `GET /api/v1/proyectos/export` y `GET /api/v1/tareas/export` con header `Content-Type: text/csv`
+- Frontend: botón "Exportar CSV" en los listados de proyectos y tareas
 
 ---
 
@@ -247,7 +258,7 @@ git push origin develop
   loadComponent: () => import('./proyectos/lista-proyectos').then(m => m.ListaProyectosComponent),
 }
 ```
-3. Agregar el ítem en el sidebar (`layout/main-layout/main-layout.ts`)
+3. Agregar el ítem en el sidebar (`layout/main-layout.ts`)
 
 ## Cómo registrar un controller/service nuevo en el backend
 
@@ -262,4 +273,3 @@ export class GestionModule {}
 ```
 
 ---
-

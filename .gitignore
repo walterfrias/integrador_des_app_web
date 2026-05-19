@@ -148,6 +148,14 @@ back/documentation/
 # Claude Code
 CLAUDE.md
 
+# Scripts de utilidad local
+create_issues.sh
+
+# Notas de clase y coordinación (uso personal, no va al repo)
+clases/
+#ONBOARDING_GRUPO.md
+dev_*.md
+
 # Variables de environnement
 .env
 .env.*
