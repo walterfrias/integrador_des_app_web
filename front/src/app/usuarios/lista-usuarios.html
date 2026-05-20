@@ -14,9 +14,58 @@
   </a>
 </div>
 
+<!-- Barra de búsqueda y filtros -->
+<div class="flex flex-col sm:flex-row gap-3 mb-4">
+  <div class="relative flex-1">
+    <span class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></span>
+    <input
+      type="text"
+      placeholder="Buscar por nombre, apellido, email o CUIL..."
+      [value]="busqueda()"
+      (input)="busqueda.set($any($event.target).value)"
+      class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    />
+  </div>
+  <div class="flex gap-2">
+    <div class="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg self-start">
+      @for (opcion of ['TODOS', 'ADMIN', 'OPERADOR']; track opcion) {
+        <button
+          (click)="filtroRol.set(opcion)"
+          class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-150"
+          [class]="filtroRol() === opcion
+            ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm'
+            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'"
+        >
+          {{ opcion }}
+        </button>
+      }
+    </div>
+    <div class="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg self-start">
+      @for (opcion of ['TODOS', 'ACTIVO', 'BAJA']; track opcion) {
+        <button
+          (click)="filtroEstado.set(opcion)"
+          class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-150"
+          [class]="filtroEstado() === opcion
+            ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm'
+            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'"
+        >
+          {{ opcion }}
+        </button>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Contador de resultados -->
+@if (busqueda() || filtroRol() !== 'TODOS' || filtroEstado() !== 'TODOS') {
+  <p class="text-xs text-slate-400 dark:text-slate-500 mb-3">
+    {{ usuariosFiltrados().length }} resultado{{ usuariosFiltrados().length !== 1 ? 's' : '' }}
+  </p>
+}
+
 <div class="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
   <p-table
-    [value]="usuarios()"
+    [value]="usuariosFiltrados()"
     [loading]="loading()"
     [paginator]="true"
     [rows]="10"
@@ -33,7 +82,7 @@
 
     <ng-template #body let-usuario>
       <tr>
-        <td class="font-medium text-slate-800 dark:text-slate-100">{{ usuario.nombre }}</td>
+        <td class="font-medium text-slate-800 dark:text-slate-100">{{ usuario.nombre }}{{ usuario.apellido ? ' ' + usuario.apellido : '' }}</td>
         <td class="text-slate-600 dark:text-slate-400 text-sm">{{ usuario.rol }}</td>
         <td>
           <p-tag [value]="usuario.estado" [severity]="severidadEstado(usuario.estado)" />
@@ -53,7 +102,9 @@
 
     <ng-template #empty>
       <tr>
-        <td colspan="4" class="text-center text-slate-400 dark:text-slate-500 py-8">No hay usuarios registrados</td>
+        <td colspan="4" class="text-center text-slate-400 dark:text-slate-500 py-8">
+          {{ busqueda() || filtroRol() !== 'TODOS' || filtroEstado() !== 'TODOS' ? 'Sin resultados para los filtros aplicados' : 'No hay usuarios registrados' }}
+        </td>
       </tr>
     </ng-template>
   </p-table>

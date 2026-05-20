@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
@@ -19,6 +19,25 @@ export class ListaUsuariosComponent implements OnInit {
 
   usuarios = signal<Usuario[]>([]);
   loading = signal(true);
+  busqueda = signal('');
+  filtroRol = signal('TODOS');
+  filtroEstado = signal('TODOS');
+
+  usuariosFiltrados = computed(() => {
+    const q = this.busqueda().toLowerCase().trim();
+    const rol = this.filtroRol();
+    const estado = this.filtroEstado();
+    return this.usuarios().filter(u => {
+      const matchRol = rol === 'TODOS' || u.rol === rol;
+      const matchEstado = estado === 'TODOS' || u.estado === estado;
+      const matchQ = !q
+        || u.nombre.toLowerCase().includes(q)
+        || (u.apellido ?? '').toLowerCase().includes(q)
+        || (u.email ?? '').toLowerCase().includes(q)
+        || (u.cuil ?? '').toLowerCase().includes(q);
+      return matchRol && matchEstado && matchQ;
+    });
+  });
 
   ngOnInit() {
     this.cargarUsuarios();

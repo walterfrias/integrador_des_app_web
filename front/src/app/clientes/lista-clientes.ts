@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
@@ -19,6 +19,21 @@ export class ListaClientesComponent implements OnInit {
 
   clientes = signal<Cliente[]>([]);
   loading = signal(true);
+  busqueda = signal('');
+  filtroEstado = signal('TODOS');
+
+  clientesFiltrados = computed(() => {
+    const q = this.busqueda().toLowerCase().trim();
+    const estado = this.filtroEstado();
+    return this.clientes().filter(c => {
+      const matchEstado = estado === 'TODOS' || c.estado === estado;
+      const matchQ = !q
+        || c.nombre.toLowerCase().includes(q)
+        || (c.cuit ?? '').toLowerCase().includes(q)
+        || (c.direccion ?? '').toLowerCase().includes(q);
+      return matchEstado && matchQ;
+    });
+  });
 
   ngOnInit() {
     this.cargarClientes();
