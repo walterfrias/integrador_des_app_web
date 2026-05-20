@@ -8,10 +8,32 @@ export class TareasPorResponsableDto {
 }
 
 export class TareaEstadoUsuarioDto {
+  @ApiProperty() usuarioId!: number;
   @ApiProperty() nombre!: string;
   @ApiProperty() apellido!: string | null;
   @ApiProperty() pendientes!: number;
   @ApiProperty() finalizadas!: number;
+}
+
+export class TareaDetalleDto {
+  @ApiProperty() id!: number;
+  @ApiProperty() descripcion!: string;
+  @ApiProperty() estado!: string;
+  @ApiProperty() fechaCreacion!: Date;
+}
+
+export class ProyectoConTareasDto {
+  @ApiProperty() id!: number;
+  @ApiProperty() nombre!: string;
+  @ApiProperty() estado!: string;
+  @ApiProperty({ type: [TareaDetalleDto] }) tareas!: TareaDetalleDto[];
+}
+
+export class DetalleUsuarioDto {
+  @ApiProperty() id!: number;
+  @ApiProperty() nombre!: string;
+  @ApiProperty() apellido!: string | null;
+  @ApiProperty({ type: [ProyectoConTareasDto] }) proyectos!: ProyectoConTareasDto[];
 }
 
 export class SerieSemanalDto {
@@ -22,6 +44,12 @@ export class SerieSemanalDto {
 export class ActividadSemanalDto {
   @ApiProperty({ type: [String] }) semanas!: string[];
   @ApiProperty({ type: [SerieSemanalDto] }) series!: SerieSemanalDto[];
+}
+
+export class CreadasVsFinalizadasDto {
+  @ApiProperty({ type: [String] }) semanas!: string[];
+  @ApiProperty({ type: [Number] }) creadas!: number[];
+  @ApiProperty({ type: [Number] }) finalizadas!: number[];
 }
 
 export class StatsDto {

@@ -146,94 +146,94 @@ const PROYECTOS = [
 
 const TAREAS: { descripcion: string; estado: EstadoTarea; proyectoNombre: string; responsableEmail: string | null; fechaCreacion?: Date }[] = [
   // Sistema de Facturación
-  { descripcion: 'Relevamiento de requerimientos con el cliente',         estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Sistema de Facturación',          responsableEmail: 'walter@prueba.com', fechaCreacion: new Date('2026-02-18') },
-  { descripcion: 'Diseño del modelo de base de datos',                    estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Sistema de Facturación',          responsableEmail: 'lucia@prueba.com', fechaCreacion: new Date('2026-02-25') },
-  { descripcion: 'Implementar módulo de emisión de facturas',             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Facturación',          responsableEmail: 'martin@prueba.com' },
+  { descripcion: 'Relevamiento de requerimientos con el cliente',         estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Sistema de Facturación',          responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-02-18') },
+  { descripcion: 'Diseño del modelo de base de datos',                    estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Sistema de Facturación',          responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-02-25') },
+  { descripcion: 'Implementar módulo de emisión de facturas',             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Facturación',          responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-03-04') },
 
   // Portal Web Corporativo
-  { descripcion: 'Diseño de mockups y wireframes',                        estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Portal Web Corporativo',          responsableEmail: 'sofia@prueba.com', fechaCreacion: new Date('2026-02-18') },
-  { descripcion: 'Desarrollo de componentes frontend',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal Web Corporativo',          responsableEmail: 'walter@prueba.com' },
-  { descripcion: 'Integración con CMS',                                   estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal Web Corporativo',          responsableEmail: 'operador@prueba.com' },
+  { descripcion: 'Diseño de mockups y wireframes',                        estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Portal Web Corporativo',          responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-02-18') },
+  { descripcion: 'Desarrollo de componentes frontend',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal Web Corporativo',          responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-02-25') },
+  { descripcion: 'Integración con CMS',                                   estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal Web Corporativo',          responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-03-04') },
 
   // Migración de Base de Datos
-  { descripcion: 'Auditoría de la base de datos actual',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Migración de Base de Datos',      responsableEmail: 'lucia@prueba.com', fechaCreacion: new Date('2026-02-25') },
-  { descripcion: 'Generar scripts de migración',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración de Base de Datos',      responsableEmail: 'martin@prueba.com' },
-  { descripcion: 'Pruebas de integridad post-migración',                  estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración de Base de Datos',      responsableEmail: null },
+  { descripcion: 'Auditoría de la base de datos actual',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Migración de Base de Datos',      responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-02-25') },
+  { descripcion: 'Generar scripts de migración',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración de Base de Datos',      responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-03-04') },
+  { descripcion: 'Pruebas de integridad post-migración',                  estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración de Base de Datos',      responsableEmail: null,                  fechaCreacion: new Date('2026-03-11') },
 
   // Plataforma E-commerce
-  { descripcion: 'Configurar pasarela de pagos',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma E-commerce',           responsableEmail: 'walter@prueba.com' },
-  { descripcion: 'Implementar catálogo de productos',                     estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Plataforma E-commerce',           responsableEmail: 'sofia@prueba.com', fechaCreacion: new Date('2026-03-17') },
-  { descripcion: 'Desarrollo del carrito de compras',                     estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma E-commerce',           responsableEmail: 'lucia@prueba.com' },
+  { descripcion: 'Configurar pasarela de pagos',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma E-commerce',           responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-03-18') },
+  { descripcion: 'Implementar catálogo de productos',                     estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Plataforma E-commerce',           responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-03-17') },
+  { descripcion: 'Desarrollo del carrito de compras',                     estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma E-commerce',           responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-03-25') },
 
   // Sistema de Gestión Hospitalaria
-  { descripcion: 'Módulo de historia clínica digital',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Gestión Hospitalaria', responsableEmail: 'martin@prueba.com' },
-  { descripcion: 'Sistema de gestión de turnos',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Gestión Hospitalaria', responsableEmail: 'operador@prueba.com' },
-  { descripcion: 'Integración con laboratorio',                           estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Gestión Hospitalaria', responsableEmail: 'walter@prueba.com' },
+  { descripcion: 'Módulo de historia clínica digital',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Gestión Hospitalaria', responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-02-18') },
+  { descripcion: 'Sistema de gestión de turnos',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Gestión Hospitalaria', responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-02-25') },
+  { descripcion: 'Integración con laboratorio',                           estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Gestión Hospitalaria', responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-03-04') },
 
   // Rediseño de Infraestructura TI
-  { descripcion: 'Inventario de infraestructura actual',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Rediseño de Infraestructura TI',  responsableEmail: 'lucia@prueba.com', fechaCreacion: new Date('2026-03-10') },
-  { descripcion: 'Propuesta de arquitectura nueva',                       estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Rediseño de Infraestructura TI',  responsableEmail: 'martin@prueba.com', fechaCreacion: new Date('2026-03-10') },
-  { descripcion: 'Implementar nueva infraestructura',                     estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Rediseño de Infraestructura TI',  responsableEmail: 'sofia@prueba.com' },
+  { descripcion: 'Inventario de infraestructura actual',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Rediseño de Infraestructura TI',  responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-03-10') },
+  { descripcion: 'Propuesta de arquitectura nueva',                       estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Rediseño de Infraestructura TI',  responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-03-10') },
+  { descripcion: 'Implementar nueva infraestructura',                     estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Rediseño de Infraestructura TI',  responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-03-18') },
 
   // ERP Agropecuario
   { descripcion: 'Análisis de procesos del negocio agropecuario',         estado: EstadoTarea.FINALIZADA, proyectoNombre: 'ERP Agropecuario',                responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-03-03') },
-  { descripcion: 'Módulo de gestión de stock',                            estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'ERP Agropecuario',                responsableEmail: 'walter@prueba.com' },
-  { descripcion: 'Módulo de ventas y remitos',                            estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'ERP Agropecuario',                responsableEmail: 'lucia@prueba.com' },
+  { descripcion: 'Módulo de gestión de stock',                            estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'ERP Agropecuario',                responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-03-11') },
+  { descripcion: 'Módulo de ventas y remitos',                            estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'ERP Agropecuario',                responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-03-18') },
 
   // Portal de Empleados
-  { descripcion: 'Módulo de liquidación de sueldos',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal de Empleados',             responsableEmail: 'martin@prueba.com' },
-  { descripcion: 'Gestión de licencias y ausencias',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal de Empleados',             responsableEmail: 'sofia@prueba.com' },
-  { descripcion: 'Notificaciones y comunicados internos',                 estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal de Empleados',             responsableEmail: null },
+  { descripcion: 'Módulo de liquidación de sueldos',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal de Empleados',             responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-02-25') },
+  { descripcion: 'Gestión de licencias y ausencias',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal de Empleados',             responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-03-04') },
+  { descripcion: 'Notificaciones y comunicados internos',                 estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Portal de Empleados',             responsableEmail: null,                  fechaCreacion: new Date('2026-03-11') },
 
   // Sistema de Turnos Online
-  { descripcion: 'Calendario interactivo de disponibilidad',              estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Turnos Online',        responsableEmail: 'walter@prueba.com' },
-  { descripcion: 'Recordatorios automáticos por email',                   estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Turnos Online',        responsableEmail: 'operador@prueba.com' },
-  { descripcion: 'Historial de turnos por paciente',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Turnos Online',        responsableEmail: 'lucia@prueba.com' },
+  { descripcion: 'Calendario interactivo de disponibilidad',              estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Turnos Online',        responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-03-18') },
+  { descripcion: 'Recordatorios automáticos por email',                   estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Turnos Online',        responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-03-25') },
+  { descripcion: 'Historial de turnos por paciente',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema de Turnos Online',        responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-03-25') },
 
   // Digitalización de Archivos
-  { descripcion: 'Escaneo y clasificación de documentos físicos',         estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Digitalización de Archivos',      responsableEmail: 'martin@prueba.com', fechaCreacion: new Date('2026-03-24') },
-  { descripcion: 'Implementar buscador de documentos',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Digitalización de Archivos',      responsableEmail: 'sofia@prueba.com' },
-  { descripcion: 'Control de acceso por perfil',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Digitalización de Archivos',      responsableEmail: 'walter@prueba.com' },
+  { descripcion: 'Escaneo y clasificación de documentos físicos',         estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Digitalización de Archivos',      responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-03-24') },
+  { descripcion: 'Implementar buscador de documentos',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Digitalización de Archivos',      responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-04-01') },
+  { descripcion: 'Control de acceso por perfil',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Digitalización de Archivos',      responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-04-01') },
 
   // App de Logística
-  { descripcion: 'Módulo de seguimiento de envíos en tiempo real',        estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'App de Logística',                responsableEmail: 'lucia@prueba.com' },
-  { descripcion: 'Gestión de rutas y conductores',                        estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'App de Logística',                responsableEmail: 'operador@prueba.com' },
-  { descripcion: 'Reportes de tiempos de entrega',                        estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'App de Logística',                responsableEmail: 'martin@prueba.com' },
+  { descripcion: 'Módulo de seguimiento de envíos en tiempo real',        estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'App de Logística',                responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-04-07') },
+  { descripcion: 'Gestión de rutas y conductores',                        estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'App de Logística',                responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-04-07') },
+  { descripcion: 'Reportes de tiempos de entrega',                        estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'App de Logística',                responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-04-14') },
 
   // Sistema Contable Integrado
-  { descripcion: 'Importación de asientos contables',                     estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Sistema Contable Integrado',      responsableEmail: 'sofia@prueba.com', fechaCreacion: new Date('2026-03-31') },
-  { descripcion: 'Generación de balance y estado de resultados',          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema Contable Integrado',      responsableEmail: 'walter@prueba.com' },
-  { descripcion: 'Exportación a Excel y PDF',                             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema Contable Integrado',      responsableEmail: null },
+  { descripcion: 'Importación de asientos contables',                     estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Sistema Contable Integrado',      responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-03-31') },
+  { descripcion: 'Generación de balance y estado de resultados',          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema Contable Integrado',      responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-04-07') },
+  { descripcion: 'Exportación a Excel y PDF',                             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Sistema Contable Integrado',      responsableEmail: null,                  fechaCreacion: new Date('2026-04-07') },
 
   // Dashboard de Métricas
-  { descripcion: 'Definir KPIs con el cliente',                           estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Dashboard de Métricas',           responsableEmail: 'lucia@prueba.com', fechaCreacion: new Date('2026-03-31') },
-  { descripcion: 'Integración con fuentes de datos externas',             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Dashboard de Métricas',           responsableEmail: 'martin@prueba.com' },
-  { descripcion: 'Diseño de gráficos interactivos',                       estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Dashboard de Métricas',           responsableEmail: 'operador@prueba.com' },
+  { descripcion: 'Definir KPIs con el cliente',                           estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Dashboard de Métricas',           responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-03-31') },
+  { descripcion: 'Integración con fuentes de datos externas',             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Dashboard de Métricas',           responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-04-07') },
+  { descripcion: 'Diseño de gráficos interactivos',                       estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Dashboard de Métricas',           responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-04-14') },
 
   // Plataforma de Capacitación
-  { descripcion: 'Módulo de cursos y contenidos multimedia',              estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma de Capacitación',      responsableEmail: 'sofia@prueba.com' },
-  { descripcion: 'Sistema de evaluaciones y certificados',                estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma de Capacitación',      responsableEmail: 'walter@prueba.com' },
-  { descripcion: 'Seguimiento de progreso del alumno',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma de Capacitación',      responsableEmail: 'lucia@prueba.com' },
+  { descripcion: 'Módulo de cursos y contenidos multimedia',              estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma de Capacitación',      responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-04-14') },
+  { descripcion: 'Sistema de evaluaciones y certificados',                estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma de Capacitación',      responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-04-21') },
+  { descripcion: 'Seguimiento de progreso del alumno',                    estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Plataforma de Capacitación',      responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-04-21') },
 
   // API REST para Distribución
-  { descripcion: 'Diseño de endpoints y contratos de API',                estado: EstadoTarea.FINALIZADA, proyectoNombre: 'API REST para Distribución',      responsableEmail: 'martin@prueba.com', fechaCreacion: new Date('2026-04-07') },
-  { descripcion: 'Autenticación y autorización con JWT',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'API REST para Distribución',      responsableEmail: 'sofia@prueba.com', fechaCreacion: new Date('2026-04-14') },
-  { descripcion: 'Documentación con Swagger',                             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'API REST para Distribución',      responsableEmail: 'operador@prueba.com' },
+  { descripcion: 'Diseño de endpoints y contratos de API',                estado: EstadoTarea.FINALIZADA, proyectoNombre: 'API REST para Distribución',      responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-04-07') },
+  { descripcion: 'Autenticación y autorización con JWT',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'API REST para Distribución',      responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-04-14') },
+  { descripcion: 'Documentación con Swagger',                             estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'API REST para Distribución',      responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-04-21') },
 
   // Migración a la Nube
-  { descripcion: 'Evaluación de proveedor cloud',                         estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Migración a la Nube',             responsableEmail: 'walter@prueba.com', fechaCreacion: new Date('2026-04-14') },
-  { descripcion: 'Configuración de entornos en AWS',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración a la Nube',             responsableEmail: 'lucia@prueba.com' },
-  { descripcion: 'Plan de contingencia y rollback',                       estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración a la Nube',             responsableEmail: null },
+  { descripcion: 'Evaluación de proveedor cloud',                         estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Migración a la Nube',             responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-04-14') },
+  { descripcion: 'Configuración de entornos en AWS',                      estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración a la Nube',             responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-04-21') },
+  { descripcion: 'Plan de contingencia y rollback',                       estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Migración a la Nube',             responsableEmail: null,                  fechaCreacion: new Date('2026-04-28') },
 
   // Facturación Electrónica AFIP
-  { descripcion: 'Integración con web services de AFIP',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Facturación Electrónica AFIP',    responsableEmail: 'martin@prueba.com', fechaCreacion: new Date('2026-04-21') },
-  { descripcion: 'Generación de CAE y CAEA',                              estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Facturación Electrónica AFIP',    responsableEmail: 'sofia@prueba.com', fechaCreacion: new Date('2026-04-28') },
-  { descripcion: 'Testing en homologación AFIP',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Facturación Electrónica AFIP',    responsableEmail: 'operador@prueba.com' },
+  { descripcion: 'Integración con web services de AFIP',                  estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Facturación Electrónica AFIP',    responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-04-21') },
+  { descripcion: 'Generación de CAE y CAEA',                              estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Facturación Electrónica AFIP',    responsableEmail: 'sofia@prueba.com',    fechaCreacion: new Date('2026-04-28') },
+  { descripcion: 'Testing en homologación AFIP',                          estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Facturación Electrónica AFIP',    responsableEmail: 'operador@prueba.com', fechaCreacion: new Date('2026-04-28') },
 
   // Rediseño Portal Institucional
-  { descripcion: 'Análisis SEO y performance actual',                     estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Rediseño Portal Institucional',   responsableEmail: 'walter@prueba.com', fechaCreacion: new Date('2026-05-05') },
-  { descripcion: 'Nuevas secciones y estructura de contenidos',           estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Rediseño Portal Institucional',   responsableEmail: 'lucia@prueba.com' },
-  { descripcion: 'Optimización para dispositivos móviles',                estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Rediseño Portal Institucional',   responsableEmail: 'martin@prueba.com' },
+  { descripcion: 'Análisis SEO y performance actual',                     estado: EstadoTarea.FINALIZADA, proyectoNombre: 'Rediseño Portal Institucional',   responsableEmail: 'walter@prueba.com',   fechaCreacion: new Date('2026-05-05') },
+  { descripcion: 'Nuevas secciones y estructura de contenidos',           estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Rediseño Portal Institucional',   responsableEmail: 'lucia@prueba.com',    fechaCreacion: new Date('2026-05-05') },
+  { descripcion: 'Optimización para dispositivos móviles',                estado: EstadoTarea.PENDIENTE,  proyectoNombre: 'Rediseño Portal Institucional',   responsableEmail: 'martin@prueba.com',   fechaCreacion: new Date('2026-05-12') },
 ];
 
 const ASIGNACIONES: { usuarioEmail: string; proyectoNombre: string; estado: EstadoAsignacion; fechaAsignacion: Date }[] = [
