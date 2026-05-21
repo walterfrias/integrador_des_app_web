@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NgClass } from '@angular/common';
 import { AuthService } from '../core/services/auth.service';
 
 interface NavItem {
@@ -11,7 +12,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-main-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgClass],
   templateUrl: './main-layout.html',
 })
 export class MainLayoutComponent {
@@ -19,6 +20,7 @@ export class MainLayoutComponent {
   private router = inject(Router);
 
   sidebarCollapsed = signal(false);
+  mobileMenuOpen = signal(false);
   darkMode = signal(localStorage.getItem('darkMode') === 'true');
 
   navItems: NavItem[] = [
@@ -30,6 +32,10 @@ export class MainLayoutComponent {
 
   toggleSidebar() {
     this.sidebarCollapsed.update(v => !v);
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen.update(v => !v);
   }
 
   toggleDarkMode() {

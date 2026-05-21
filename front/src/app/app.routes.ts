@@ -40,6 +40,10 @@ export const routes: Routes = [
         loadComponent: () => import('./usuarios/form-usuario').then(m => m.FormUsuarioComponent),
       },
       {
+        path: 'usuarios/:id/detalle',
+        loadComponent: () => import('./usuarios/detalle-usuario').then(m => m.DetalleUsuarioComponent),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

@@ -1,10 +1,23 @@
 <div class="flex h-screen bg-slate-50 dark:bg-slate-950">
 
+  <!-- Backdrop mobile/tablet -->
+  @if (mobileMenuOpen()) {
+    <div
+      class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+      (click)="mobileMenuOpen.set(false)"
+    ></div>
+  }
+
   <!-- Sidebar -->
   <aside
-    class="flex flex-col bg-slate-900 transition-all duration-300 ease-in-out"
-    [class.w-60]="!sidebarCollapsed()"
-    [class.w-16]="sidebarCollapsed()"
+    class="flex flex-col bg-slate-900 transition-all duration-300 ease-in-out
+           fixed inset-y-0 left-0 z-50 w-64
+           lg:static lg:inset-auto lg:z-auto lg:translate-x-0"
+    [ngClass]="{
+      '-translate-x-full': !mobileMenuOpen(),
+      'lg:w-16': sidebarCollapsed(),
+      'lg:w-60': !sidebarCollapsed()
+    }"
   >
     <!-- Logo -->
     <div class="flex items-center gap-3 px-4 h-14 border-b border-slate-700">
@@ -22,6 +35,7 @@
           routerLinkActive="bg-indigo-600 text-white"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors duration-150 cursor-pointer"
           [class.justify-center]="sidebarCollapsed()"
+          (click)="mobileMenuOpen.set(false)"
         >
           <span class="text-base shrink-0" [class]="item.icon"></span>
           @if (!sidebarCollapsed()) {
@@ -31,8 +45,8 @@
       }
     </nav>
 
-    <!-- Toggle button -->
-    <div class="p-2 border-t border-slate-700">
+    <!-- Toggle colapsar (solo desktop) -->
+    <div class="hidden lg:block p-2 border-t border-slate-700">
       <button
         (click)="toggleSidebar()"
         class="flex items-center justify-center w-full py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors duration-150"
@@ -47,7 +61,16 @@
 
     <!-- Topbar -->
     <header class="flex items-center justify-between px-6 h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shrink-0">
-      <h1 class="text-slate-800 dark:text-slate-100 font-medium text-sm">Sistema de Gestión de Proyectos</h1>
+      <div class="flex items-center gap-3">
+        <!-- Hamburger (mobile/tablet) -->
+        <button
+          class="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-white transition-colors duration-150"
+          (click)="toggleMobileMenu()"
+        >
+          <span class="pi pi-bars"></span>
+        </button>
+        <h1 class="text-slate-800 dark:text-slate-100 font-medium text-sm">Sistema de Gestión de Proyectos</h1>
+      </div>
       <div class="flex items-center gap-4">
         <button
           (click)="toggleDarkMode()"

@@ -9,6 +9,7 @@ export interface TareasPorResponsable {
 }
 
 export interface TareaEstadoUsuario {
+  usuarioId: number;
   nombre: string;
   apellido: string | null;
   pendientes: number;
@@ -23,6 +24,33 @@ export interface SerieSemanal {
 export interface ActividadSemanal {
   semanas: string[];
   series: SerieSemanal[];
+}
+
+export interface CreadasVsFinalizadas {
+  semanas: string[];
+  creadas: number[];
+  finalizadas: number[];
+}
+
+export interface TareaDetalle {
+  id: number;
+  descripcion: string;
+  estado: string;
+  fechaCreacion: string;
+}
+
+export interface ProyectoConTareas {
+  id: number;
+  nombre: string;
+  estado: string;
+  tareas: TareaDetalle[];
+}
+
+export interface DetalleUsuario {
+  id: number;
+  nombre: string;
+  apellido: string | null;
+  proyectos: ProyectoConTareas[];
 }
 
 export interface Stats {
@@ -49,5 +77,13 @@ export class StatsService {
 
   getActividadSemanal() {
     return this.http.get<ActividadSemanal>('/api/v1/stats/actividad-semanal');
+  }
+
+  getCreadasVsFinalizadas() {
+    return this.http.get<CreadasVsFinalizadas>('/api/v1/stats/creadas-vs-finalizadas');
+  }
+
+  getDetalleUsuario(id: number) {
+    return this.http.get<DetalleUsuario>(`/api/v1/stats/usuario/${id}`);
   }
 }

@@ -11,6 +11,8 @@ import {
   TareasPorResponsableDto,
   TareaEstadoUsuarioDto,
   ActividadSemanalDto,
+  CreadasVsFinalizadasDto,
+  DetalleUsuarioDto,
 } from '../dtos/output/stats.dto';
 
 @Injectable()
@@ -89,6 +91,7 @@ export class StatsService {
         total: Number(r.total),
       })),
       tareasPorUsuarioEstado: tareasPorUsuarioEstadoRaw.map((r): TareaEstadoUsuarioDto => ({
+        usuarioId: Number(r.id),
         nombre: r.nombre,
         apellido: r.apellido,
         pendientes: Number(r.pendientes),
@@ -129,5 +132,74 @@ export class StatsService {
     }));
 
     return { semanas, series };
+  }
+
+  async getDetalleUsuario(id: number): Promise<DetalleUsuarioDto> {
+    const [usuario, tareas] = await Promise.all([
+      this.usuarioRepo.findOneByOrFail({ id }),
+      this.tareaRepo.find({
+        where: { responsable: { id } },
+        relations: ['proyecto'],
+        order: { fechaCreacion: 'ASC' },
+      }),
+    ]);
+
+    const proyectosMap = new Map<number, DetalleUsuarioDto['proyectos'][number]>();
+    for (const t of tareas) {
+      if (!proyectosMap.has(t.proyecto.id)) {
+        proyectosMap.set(t.proyecto.id, {
+          id: t.proyecto.id,
+          nombre: t.proyecto.nombre,
+          estado: t.proyecto.estado,
+          tareas: [],
+        });
+      }
+      proyectosMap.get(t.proyecto.id)!.tareas.push({
+        id: t.id,
+        descripcion: t.descripcion,
+        estado: t.estado,
+        fechaCreacion: t.fechaCreacion,
+      });
+    }
+
+    return {
+      id: usuario.id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido ?? null,
+      proyectos: [...proyectosMap.values()],
+    };
+  }
+
+  async getCreadasVsFinalizadas(): Promise<CreadasVsFinalizadasDto> {
+    const [rawCreadas, rawFinalizadas] = await Promise.all([
+      this.tareaRepo
+        .createQueryBuilder('t')
+        .select("TO_CHAR(DATE_TRUNC('week', t.fecha_creacion), 'YYYY-MM-DD')", 'semana')
+        .addSelect('COUNT(t.id)', 'total')
+        .groupBy("DATE_TRUNC('week', t.fecha_creacion)")
+        .orderBy("DATE_TRUNC('week', t.fecha_creacion)", 'ASC')
+        .getRawMany<{ semana: string; total: string }>(),
+      this.tareaRepo
+        .createQueryBuilder('t')
+        .select("TO_CHAR(DATE_TRUNC('week', t.fecha_creacion), 'YYYY-MM-DD')", 'semana')
+        .addSelect('COUNT(t.id)', 'total')
+        .where("t.estado = 'FINALIZADA'")
+        .groupBy("DATE_TRUNC('week', t.fecha_creacion)")
+        .orderBy("DATE_TRUNC('week', t.fecha_creacion)", 'ASC')
+        .getRawMany<{ semana: string; total: string }>(),
+    ]);
+
+    const semanas = [
+      ...new Set([...rawCreadas.map(r => r.semana), ...rawFinalizadas.map(r => r.semana)]),
+    ].sort();
+
+    const mapCreadas = new Map(rawCreadas.map(r => [r.semana, Number(r.total)]));
+    const mapFinalizadas = new Map(rawFinalizadas.map(r => [r.semana, Number(r.total)]));
+
+    return {
+      semanas,
+      creadas: semanas.map(s => mapCreadas.get(s) ?? 0),
+      finalizadas: semanas.map(s => mapFinalizadas.get(s) ?? 0),
+    };
   }
 }
