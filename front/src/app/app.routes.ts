@@ -44,6 +44,18 @@ export const routes: Routes = [
         loadComponent: () => import('./usuarios/detalle-usuario').then(m => m.DetalleUsuarioComponent),
       },
       {
+        path: 'proyectos',
+        loadComponent: () => import('./proyectos/lista-proyectos').then(m => m.ListaProyectosComponent),
+      },
+      {
+        path: 'proyectos/nuevo',
+        loadComponent: () => import('./proyectos/form-proyecto').then(m => m.FormProyectoComponent),
+      },
+      {
+        path: 'proyectos/:id/editar',
+        loadComponent: () => import('./proyectos/form-proyecto').then(m => m.FormProyectoComponent),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
