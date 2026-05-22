@@ -1,0 +1,57 @@
+<div class="max-w-lg">
+    <div class="flex items-center gap-3 mb-6">
+        <a routerLink="/app/proyectos" class="text-slate-400 hover:text-slate-600 transition-colors">
+            <span class="pi pi-arrow-left"></span>
+        </a>
+        <div>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100">{{ esEdicion ? 'Editar proyecto' :
+                'Nuevo proyecto' }}</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ esEdicion ? 'Modifica los datos del proyecto'
+                : 'Completa los datos para crear un proyecto' }}</p>
+        </div>
+    </div>
+    @if (loading()) {
+    <div class="text-center text-slate-400 py-8">Cargando...</div>
+    } @else {
+    @if (errorMessage()) {
+    <div class="bg-red-50 dark:bg-red-950 text-red-600 text-sm px-4 py-3 rounded-lg mb-4 border border-red-200">{{
+        errorMessage() }}</div>
+    }
+    <form [formGroup]="form" (ngSubmit)="onSubmit()"
+        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col gap-5">
+        <div class="flex flex-col gap-1.5">
+            <label for="nombre" class="text-sm font-medium text-slate-700 dark:text-slate-300">Nombre <span
+                    class="text-red-500">*</span></label>
+            <input pInputText id="nombre" formControlName="nombre" placeholder="Nombre del proyecto" class="w-full" />
+            @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) { <small class="text-red-500">El nombre es
+                requerido</small> }
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+                <label for="idCliente" class="text-sm font-medium text-slate-700 dark:text-slate-300">Cliente</label>
+                <p-select inputId="idCliente" formControlName="idCliente" [options]="clientes()" optionLabel="label"
+                    optionValue="value" placeholder="Seleccioná un cliente" styleClass="w-full" [showClear]="true" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <label for="fechaLimite" class="text-sm font-medium text-slate-700 dark:text-slate-300">Fecha
+                    límite</label>
+                <p-datepicker inputId="fechaLimite" formControlName="fechaLimite" [showIcon]="true"
+                    dateFormat="dd/mm/yy" styleClass="w-full" />
+            </div>
+        </div>
+        @if (esEdicion) {
+        <div class="flex flex-col gap-1.5">
+            <label for="estado" class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</label>
+            <p-select inputId="estado" formControlName="estado" [options]="estados" optionLabel="label"
+                optionValue="value" styleClass="w-full" />
+        </div>
+        }
+        <div class="flex gap-3 pt-2">
+            <button type="button" pButton label="Cancelar" severity="secondary" text
+                routerLink="/app/proyectos"></button>
+            <button type="submit" pButton [label]="esEdicion ? 'Guardar cambios' : 'Crear proyecto'"
+                [loading]="guardando()" [disabled]="form.invalid"></button>
+        </div>
+    </form>
+    }
+</div>
