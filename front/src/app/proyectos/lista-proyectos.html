@@ -1,0 +1,61 @@
+<p-confirmDialog />
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100">Proyectos</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestión de proyectos</p>
+    </div>
+    <a 
+        routerLink="nuevo"
+        class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-150">
+        <span class="pi pi-plus"></span> Nuevo proyecto
+    </a>
+</div>
+<div class="flex items-center gap-3 mb-4">
+    <p-select [options]="estados" [(ngModel)]="filtroEstado" optionLabel="label" optionValue="value" styleClass="w-44"
+        placeholder="Filtrar por estado" />
+    <input pInputText [(ngModel)]="busqueda" placeholder="Buscar por nombre o cliente..." class="w-64" />
+</div>
+<div class="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <p-table [value]="proyectosFiltrados()" [loading]="loading()" [paginator]="true" [rows]="10"
+        styleClass="p-datatable-sm">
+        <ng-template #header>
+            <tr>
+                <th>Nombre</th>
+                <th>Cliente</th>
+                <th>Fecha límite</th>
+                <th>Retraso</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-proyecto>
+            <tr>
+                <td class="font-medium">{{ proyecto.nombre }}</td>
+                <td class="text-sm">{{ proyecto.cliente?.nombre ?? '—' }}</td>
+                <td class="text-sm">{{ (proyecto.fechaLimite | date:'dd/MM/yyyy') ?? '—' }}</td>
+                <td>@if (proyecto.retraso) { <p-tag value="Atrasado" severity="danger" /> }</td>
+                <td><p-tag [value]="proyecto.estado" [severity]="severidadEstado(proyecto.estado)" /></td>
+                <td class="text-right">
+                    <div class="flex items-center justify-end gap-2">
+                        <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
+                            [routerLink]="[proyecto.id, 'editar']"></button>
+                        @if (proyecto.estado === 'ACTIVO') {
+                        <button pButton icon="pi pi-check" severity="success" text size="small"
+                            (click)="finalizar(proyecto)"></button>
+                        <button pButton icon="pi pi-ban" severity="danger" text size="small"
+                            (click)="confirmarBaja(proyecto)"></button>
+                        } @else {
+                        <button pButton icon="pi pi-check-circle" severity="success" text size="small"
+                            (click)="reactivar(proyecto)"></button>
+                        }
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #empty>
+            <tr>
+                <td colspan="6" class="text-center py-8">No hay proyectos registrados</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
