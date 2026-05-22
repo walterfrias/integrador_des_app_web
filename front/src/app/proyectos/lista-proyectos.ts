@@ -33,7 +33,9 @@ export class ListaProyectosComponent implements OnInit {
         const estado = this.filtroEstado();
         const q = this.busqueda().toLowerCase().trim();
         return lista.filter((p) => {
-            if (estado !== 'TODOS' && p.estado !== estado) return false;
+            if (estado === 'ATRASADO') {
+                if (!p.retraso) return false;
+            } else if (estado !== 'TODOS' && p.estado !== estado) return false;
             if (q) {
                 const nombre = p.nombre.toLowerCase();
                 const cliente = p.cliente?.nombre.toLowerCase() ?? '';
@@ -45,6 +47,7 @@ export class ListaProyectosComponent implements OnInit {
     estados = [
         { label: 'Todos', value: 'TODOS' },
         { label: 'Activo', value: 'ACTIVO' },
+        { label: 'Atrasado', value: 'ATRASADO' },
         { label: 'Finalizado', value: 'FINALIZADO' },
         { label: 'Baja', value: 'BAJA' },
     ];
