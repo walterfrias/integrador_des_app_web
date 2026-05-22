@@ -19,5 +19,5 @@ export class ListProyectoDTO {
   retraso!: boolean;
 
   @ApiProperty()
-  cliente!: ListClienteDTO;
+  cliente!: ListClienteDTO | null;
 }

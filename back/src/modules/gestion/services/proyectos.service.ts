@@ -37,13 +37,15 @@ export class ProyectosService {
             estado: p.estado as unknown as EstadosProyectosEnum,
             fechaLimite: p.fechaLimite,
             retraso: this.calcularRetraso(p),
-            cliente: {
-                id: p.cliente!.id,
-                nombre: p.cliente!.nombre,
-                cuit: p.cliente!.cuit,
-                direccion: p.cliente!.direccion,
-                estado: p.cliente!.estado,
-            },
+            cliente: p.cliente
+                ? {
+                    id: p.cliente.id,
+                    nombre: p.cliente.nombre,
+                    cuit: p.cliente.cuit,
+                    direccion: p.cliente.direccion,
+                    estado: p.cliente.estado,
+                }
+                : null,
         }));
     }
     async crear(dto: CreateProyectoDto): Promise<{ id: number }> {
@@ -141,6 +143,8 @@ export class ProyectosService {
         if (proyecto.estado === EstadoProyecto.FINALIZADO) return false;
         const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);
-        return proyecto.fechaLimite < hoy;
+        const fechaLimite = new Date(proyecto.fechaLimite);
+        fechaLimite.setHours(0, 0, 0, 0);
+        return fechaLimite.getTime() < hoy.getTime();
     }
 }
