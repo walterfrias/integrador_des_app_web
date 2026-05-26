@@ -8,7 +8,7 @@ Stack: NestJS + Angular + PostgreSQL
 ## Requisitos
 
 - Node.js 20+
-- Docker y Docker Compose
+- Docker (Opcional)
 - npm
 
 ---
@@ -124,5 +124,5 @@ Cada push a `main` deploya automáticamente.
 ## Flujo de ramas
 
 ```
-walter / [rama-compañero] → develop → main
+develop / [rama-compañero] → develop → main
 ```
