@@ -56,6 +56,11 @@ export const routes: Routes = [
         loadComponent: () => import('./proyectos/form-proyecto').then(m => m.FormProyectoComponent),
       },
       {
+        path: 'mis-tareas',
+        loadComponent: () => 
+          import('./tareas-proyecto/tareas-proyecto.component').then((m) => m.TareasProyectoComponent),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

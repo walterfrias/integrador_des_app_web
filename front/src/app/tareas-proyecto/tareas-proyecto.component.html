@@ -1,0 +1,31 @@
+<div class="flex flex-wrap p-4 gap-4">
+  <div *ngFor="let nombreP of getNombres()" class="w-full md:w-1/3 lg:w-1/4 bg-gray-50 p-4 rounded-lg shadow">
+    <h3 class="font-bold text-lg mb-4 text-blue-700">{{ nombreP }}</h3>
+    
+    <div class="flex gap-2 mb-4">
+      <input type="text" class="border p-2 rounded w-full" placeholder="+ Nueva" [(ngModel)]="nuevaTareaTexto[nombreP]">
+      <button class="bg-blue-600 text-white px-3 py-1 rounded" (click)="agregarTarea(nombreP)">+</button>
+    </div>
+
+    <div *ngFor="let t of columnas[nombreP]" class="bg-white p-3 mb-2 rounded shadow-sm border">
+      <div class="flex justify-between items-center w-full">
+        
+        <div *ngIf="tareaEditando !== t" class="flex-grow cursor-pointer" (click)="editarTarea(t)">
+          <span class="text-sm font-medium">{{ t.descripcion }}</span>
+        </div>
+
+        <div *ngIf="tareaEditando === t" class="flex gap-1 flex-grow">
+          <input [(ngModel)]="textoEdicion" class="border p-1 text-sm rounded w-full">
+          <button (click)="guardarEdicion(t)" class="text-green-600 font-bold px-2">✓</button>
+        </div>
+
+        <button class="text-red-500 font-bold ml-2" (click)="eliminarTarea(t.id)">×</button>
+      </div>
+
+      <select class="w-full mt-2 text-xs border rounded p-1" (change)="actualizarEstado(t, $event)">
+        <option [selected]="t.estado === 'PENDIENTE'" value="PENDIENTE">PENDIENTE</option>
+        <option [selected]="t.estado === 'FINALIZADA'" value="FINALIZADA">FINALIZADA</option>
+      </select>
+    </div>
+  </div>
+</div>

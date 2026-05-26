@@ -28,6 +28,7 @@ export class MainLayoutComponent {
     { label: 'Proyectos', icon: 'pi pi-briefcase', route: '/app/proyectos' },
     { label: 'Clientes', icon: 'pi pi-users', route: '/app/clientes' },
     { label: 'Usuarios', icon: 'pi pi-user', route: '/app/usuarios', adminOnly: true },
+    { label: 'Tareas', icon: 'pi pi-check-square', route: '/app/mis-tareas', adminOnly: false }
   ];
 
   toggleSidebar() {

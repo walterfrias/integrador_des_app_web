@@ -19,7 +19,7 @@ export class TareasService {
     private readonly usuarioRepository: Repository<Usuario>,
   ) {}
 
-  // RF10: Crear tarea vinculada a un proyecto específico
+  // Crear tarea vinculada a un proyecto específico
   async crear(proyectoId: number, dto: CreateTareaDto): Promise<Tarea> {
     const estadoInput =
       dto && 'estado' in dto
@@ -45,7 +45,7 @@ export class TareasService {
     return await this.tareaRepository.save(nuevaTarea);
   }
 
-  // RF11 y RF33: Listar tareas de un proyecto
+  // Listar tareas de un proyecto
   async listarPorProyecto(
     proyectoId: number,
     responsableId?: number,
@@ -66,7 +66,14 @@ export class TareasService {
     return await queryBuilder.getMany();
   }
 
-  // RF11: Modificar los datos o el estado de la tarea
+  async listarTodas(): Promise<Tarea[]> {
+    return await this.tareaRepository
+      .createQueryBuilder('tarea')
+      .leftJoinAndSelect('tarea.proyecto', 'proyecto')
+      .orderBy('tarea.id', 'ASC')
+      .getMany();
+  }
+  // Modificar los datos o el estado de la tarea
   async actualizar(tareaId: number, dto: UpdateTareaDto): Promise<Tarea> {
     const filtro: FindOptionsWhere<Tarea> = { id: Number(tareaId) };
     const tarea = await this.tareaRepository.findOne({
@@ -80,7 +87,7 @@ export class TareasService {
     this.tareaRepository.merge(tarea, dto as any);
     return await this.tareaRepository.save(tarea);
   }
-  // RF31: Asignar un responsable validando que el usuario esté ACTIVO (Requerimiento R18)
+  // Asignar un responsable validando que el usuario esté ACTIVO
   async asignarResponsable(tareaId: number, usuarioId: number): Promise<Tarea> {
     const filtroTarea: FindOptionsWhere<Tarea> = { id: Number(tareaId) };
     const tarea = await this.tareaRepository.findOne({
@@ -103,7 +110,7 @@ export class TareasService {
     return await this.tareaRepository.save(tarea);
   }
 
-  // RF32: Quitar responsable
+  // Quitar responsable
   async quitarResponsable(tareaId: number): Promise<Tarea> {
     const filtro: FindOptionsWhere<Tarea> = { id: Number(tareaId) };
     const tarea = await this.tareaRepository.findOne({
@@ -119,7 +126,7 @@ export class TareasService {
     return await this.tareaRepository.save(tarea);
   }
 
-  // RF12: Eliminar físicamente la tarea
+  // Eliminar físicamente la tarea
   async eliminar(tareaId: number): Promise<void> {
     const resultado = await this.tareaRepository.delete(Number(tareaId));
     if (resultado.affected === 0) {

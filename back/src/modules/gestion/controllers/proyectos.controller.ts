@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotImplementedException,
   Param,
   ParseIntPipe,
   Post,
@@ -27,7 +26,9 @@ export class ProyectosController {
   constructor(private readonly proyectosService: ProyectosService) {}
   @ApiOkResponse({ type: ListProyectoDTO, isArray: true })
   @Get()
-  listar(@Query('estado') estado?: EstadosProyectosEnum): Promise<ListProyectoDTO[]> {
+  listar(
+    @Query('estado') estado?: EstadosProyectosEnum,
+  ): Promise<ListProyectoDTO[]> {
     return this.proyectosService.listar(estado);
   }
   @Post()
