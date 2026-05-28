@@ -4,12 +4,13 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { ClientesService, Cliente } from '../core/services/clientes.service';
 
 @Component({
   selector: 'app-lista-clientes',
-  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule],
+  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule, TooltipModule],
   providers: [ConfirmationService],
   templateUrl: './lista-clientes.html',
 })

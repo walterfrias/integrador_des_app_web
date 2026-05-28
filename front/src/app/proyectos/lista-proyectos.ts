@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ProyectosService, ListProyectoDTO } from '../core/services/proyectos.service';
@@ -15,7 +16,7 @@ import { ProyectosService, ListProyectoDTO } from '../core/services/proyectos.se
     selector: 'app-lista-proyectos',
     imports: [
         RouterLink, DatePipe, FormsModule,
-        TableModule, TagModule, ButtonModule, SelectModule, InputTextModule, ConfirmDialogModule,
+        TableModule, TagModule, ButtonModule, SelectModule, InputTextModule, TooltipModule, ConfirmDialogModule,
     ],
     providers: [ConfirmationService],
     templateUrl: './lista-proyectos.html',

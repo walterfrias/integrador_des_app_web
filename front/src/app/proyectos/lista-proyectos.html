@@ -38,17 +38,22 @@
                 <td class="text-right">
                     <div class="flex items-center justify-end gap-2">
                         <button pButton icon="pi pi-list-check" severity="info" text size="small"
-                            [routerLink]="['/app/proyectos', proyecto.id]"></button>
+                            [routerLink]="['/app/proyectos', proyecto.id]"
+                            pTooltip="Ver detalles" tooltipPosition="top"></button>
                         <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
-                            [routerLink]="[proyecto.id, 'editar']"></button>
+                            [routerLink]="[proyecto.id, 'editar']"
+                            pTooltip="Editar" tooltipPosition="top"></button>
                         @if (proyecto.estado === 'ACTIVO') {
                         <button pButton icon="pi pi-check" severity="success" text size="small"
-                            (click)="finalizar(proyecto)"></button>
+                            (click)="finalizar(proyecto)"
+                            pTooltip="Finalizar" tooltipPosition="top"></button>
                         <button pButton icon="pi pi-ban" severity="danger" text size="small"
-                            (click)="confirmarBaja(proyecto)"></button>
+                            (click)="confirmarBaja(proyecto)"
+                            pTooltip="Dar de baja" tooltipPosition="top"></button>
                         } @else {
-                        <button pButton icon="pi pi-check-circle" severity="success" text size="small"
-                            (click)="reactivar(proyecto)"></button>
+                        <button pButton icon="pi pi-undo" severity="warn" text size="small"
+                            (click)="reactivar(proyecto)"
+                            pTooltip="Reactivar" tooltipPosition="top"></button>
                         }
                     </div>
                 </td>
