@@ -83,10 +83,19 @@
                     <td><p-tag [value]="tarea.estado" [severity]="severidadEstado(tarea.estado)" /></td>
                     <td class="text-sm">{{ tarea.fechaCreacion | date:'dd/MM/yyyy' }}</td>
                     <td class="text-right">
-                        <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
-                            (click)="abrirEditarTarea(tarea)"></button>
-                        <button pButton icon="pi pi-trash" severity="danger" text size="small"
-                            (click)="confirmarEliminarTarea(tarea)"></button>
+                        <div class="flex items-center justify-end gap-1">
+                            @if (tarea.estado === 'PENDIENTE') {
+                            <button pButton icon="pi pi-check" severity="success" text size="small"
+                                pTooltip="Finalizar" (click)="cambiarEstado(tarea, 'FINALIZADA')"></button>
+                            } @else {
+                            <button pButton icon="pi pi-undo" severity="warn" text size="small"
+                                pTooltip="Reabrir" (click)="cambiarEstado(tarea, 'PENDIENTE')"></button>
+                            }
+                            <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
+                                pTooltip="Editar" (click)="abrirEditarTarea(tarea)"></button>
+                            <button pButton icon="pi pi-trash" severity="danger" text size="small"
+                                pTooltip="Eliminar" (click)="confirmarEliminarTarea(tarea)"></button>
+                        </div>
                     </td>
                 </tr>
             </ng-template>

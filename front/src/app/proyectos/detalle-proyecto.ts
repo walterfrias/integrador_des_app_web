@@ -6,6 +6,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -17,7 +18,7 @@ import { TareasService } from '../core/services/tareas.service';
     selector: 'app-detalle-proyecto',
     imports: [
         RouterLink, DatePipe,
-        TableModule, TagModule, ButtonModule, DialogModule, InputTextModule, SelectModule,
+        TableModule, TagModule, ButtonModule, DialogModule, TooltipModule, InputTextModule, SelectModule,
         ReactiveFormsModule, ConfirmDialogModule,
     ],
     providers: [ConfirmationService],
@@ -114,6 +115,16 @@ export class DetalleProyectoComponent implements OnInit {
                     error: () => console.error('Error al eliminar tarea'),
                 });
             },
+        });
+    }
+
+    cambiarEstado(tarea: any, nuevoEstado: string) {
+        this.tareasService.actualizarTarea(this.proyecto()!.id, tarea.id, {
+            descripcion: tarea.descripcion,
+            estado: nuevoEstado,
+        }).subscribe({
+            next: () => this.cargar(this.proyecto()!.id),
+            error: () => console.error('Error al cambiar estado'),
         });
     }
 
