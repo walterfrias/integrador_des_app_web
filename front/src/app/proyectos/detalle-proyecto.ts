@@ -91,6 +91,7 @@ export class DetalleProyectoComponent implements OnInit {
         request$.subscribe({
             next: () => {
                 this.dialogTarea.set(false);
+                this.guardandoTarea.set(false);
                 this.cargar(proyectoId);
             },
             error: () => {
