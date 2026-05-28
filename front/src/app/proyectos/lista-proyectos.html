@@ -31,7 +31,14 @@
         <ng-template #body let-proyecto>
             <tr>
                 <td class="font-medium">{{ proyecto.nombre }}</td>
-                <td class="text-sm">{{ proyecto.cliente?.nombre ?? '—' }}</td>
+                <td class="text-sm">
+                    @if (proyecto.cliente) {
+                    <a [routerLink]="['/app/clientes']" [queryParams]="{busqueda: proyecto.cliente.nombre}"
+                        class="text-indigo-600 hover:underline">
+                        {{ proyecto.cliente.nombre }}
+                    </a>
+                    } @else { — }
+                </td>
                 <td class="text-sm">{{ (proyecto.fechaLimite | date:'dd/MM/yyyy') ?? '—' }}</td>
                 <td>@if (proyecto.retraso) { <p-tag value="Atrasado" severity="danger" /> }</td>
                 <td><p-tag [value]="proyecto.estado" [severity]="severidadEstado(proyecto.estado)" /></td>
