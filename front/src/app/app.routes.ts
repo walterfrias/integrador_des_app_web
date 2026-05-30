@@ -52,12 +52,16 @@ export const routes: Routes = [
         loadComponent: () => import('./proyectos/form-proyecto').then(m => m.FormProyectoComponent),
       },
       {
+        path: 'proyectos/:id',
+        loadComponent: () => import('./proyectos/detalle-proyecto').then(m => m.DetalleProyectoComponent),
+      },
+      {
         path: 'proyectos/:id/editar',
         loadComponent: () => import('./proyectos/form-proyecto').then(m => m.FormProyectoComponent),
       },
       {
         path: 'mis-tareas',
-        loadComponent: () => 
+        loadComponent: () =>
           import('./tareas-proyecto/tareas-proyecto.component').then((m) => m.TareasProyectoComponent),
       },
       {

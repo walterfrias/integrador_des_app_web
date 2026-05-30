@@ -1,26 +1,29 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { ClientesService, Cliente } from '../core/services/clientes.service';
 
 @Component({
   selector: 'app-lista-clientes',
-  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule],
+  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule, TooltipModule],
   providers: [ConfirmationService],
   templateUrl: './lista-clientes.html',
 })
 export class ListaClientesComponent implements OnInit {
   private clientesService = inject(ClientesService);
   private confirmationService = inject(ConfirmationService);
+  private route = inject(ActivatedRoute);
 
   clientes = signal<Cliente[]>([]);
   loading = signal(true);
   busqueda = signal('');
   filtroEstado = signal('TODOS');
+  errorBaja = signal('');
 
   clientesFiltrados = computed(() => {
     const q = this.busqueda().toLowerCase().trim();
@@ -36,6 +39,11 @@ export class ListaClientesComponent implements OnInit {
   });
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['busqueda']) {
+        this.busqueda.set(params['busqueda']);
+      }
+    });
     this.cargarClientes();
   }
 
@@ -62,8 +70,12 @@ export class ListaClientesComponent implements OnInit {
   }
 
   private darDeBaja(id: number) {
+    this.errorBaja.set('');
     this.clientesService.actualizar(id, { estado: 'BAJA' }).subscribe({
       next: () => this.cargarClientes(),
+      error: (err) => {
+        this.errorBaja.set(err.error?.message || 'Error al dar de baja el cliente');
+      },
     });
   }
 

@@ -7,33 +7,45 @@ Stack: NestJS + Angular + PostgreSQL
 
 ## Requisitos
 
-- Node.js 20+
-- Docker y Docker Compose
-- npm
+- **Node.js 20+** → [descargar](https://nodejs.org/)
+- **Docker Desktop** → [descargar](https://www.docker.com/products/docker-desktop/)
+- **npm** (viene con Node.js)
 
 ---
 
-## Levantar el proyecto
+## 🚀 Guía rápida (para el docente)
 
-### 1. Base de datos
+Seguí estos pasos **en orden** desde una terminal (PowerShell, CMD o Git Bash):
+
+### 1. Base de datos (PostgreSQL + pgAdmin)
 
 ```bash
 docker compose up -d
 ```
 
-### 2. Backend (desde `back/`)
+Esto levanta:
+- **PostgreSQL** en `localhost:5432`
+- **pgAdmin** en `http://localhost:5050`  
+  (usuario: `admin@admin.com` — contraseña: `admin`)
+
+> ⚠️ Esperá unos segundos hasta que PostgreSQL esté listo.
+
+### 2. Backend
 
 ```bash
 cd back
 npm install
 npm run migration:run
+npm run seed
 npm run start:dev
 ```
 
-Disponible en: `http://localhost:3000`  
-Swagger (docs API): `http://localhost:3000/api`
+- API disponible en: `http://localhost:3000`
+- Documentación Swagger: `http://localhost:3000/api`
 
-### 3. Frontend (desde `front/`)
+### 3. Frontend
+
+**Abrí otra terminal** y ejecutá:
 
 ```bash
 cd front
@@ -41,13 +53,42 @@ npm install
 npm start
 ```
 
-Disponible en: `http://localhost:4200`
+- Frontend disponible en: `http://localhost:4200`
+
+### 4. Acceder al sistema
+
+| Usuario     | Contraseña        | Rol     |
+|-------------|-------------------|---------|
+| admin@admin.com | `adminintegrador` | Admin   |
+| operador@prueba.com | `operadorintegrador` | Operador |
+
+---
+
+## 📋 Flujo completo (resumen)
+
+```powershell
+# 1. Base de datos
+docker compose up -d
+
+# 2. Backend
+cd back
+npm install
+npm run migration:run
+npm run seed
+npm run start:dev
+
+# 3. Frontend (nueva terminal)
+cd front
+npm install
+npm start
+```
 
 ---
 
 ## Variables de entorno
 
-Crear el archivo `back/.env`:
+El archivo `back/.env` ya viene configurado con valores por defecto.  
+Si querés modificarlos, editá ese archivo:
 
 ```
 DB_HOST=localhost
@@ -56,7 +97,7 @@ DB_USER=postgres
 DB_PASSWORD=postgres
 DB_NAME=cooperadora
 DB_SSL=false
-JWT_SECRET=secreto
+JWT_SECRET=secreto_entregable
 JWT_EXPIRES_IN=8h
 SWAGGER_HABILITADO=true
 PORT=3000
