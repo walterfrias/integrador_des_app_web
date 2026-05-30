@@ -30,6 +30,19 @@ Esto levanta:
 
 > ⚠️ Esperá unos segundos hasta que PostgreSQL esté listo.
 
+#### 🔧 Configurar pgAdmin (solo la primera vez)
+
+1. Ingresá a [http://localhost:5050](http://localhost:5050) con `admin@admin.com` / `admin`
+2. Hacé clic en **Add New Server**
+3. Pestaña **General** → Name: `TPI Integrador` (o el nombre que quieras)
+4. Pestaña **Connection**:
+   - **Host:** `db` (nombre del servicio de Docker)
+   - **Port:** `5432`
+   - **Username:** `postgres`
+   - **Password:** `postgres`
+   - **Save password:** ✅ marcado
+5. Hacé clic en **Save**
+
 ### 2. Backend
 
 ```bash
@@ -39,6 +52,8 @@ npm run migration:run
 npm run seed
 npm run start:dev
 ```
+
+> El comando `npm run seed` crea los datos iniciales, incluyendo el **usuario administrador** y varios clientes, proyectos, tareas y asignaciones de ejemplo.
 
 - API disponible en: `http://localhost:3000`
 - Documentación Swagger: `http://localhost:3000/api`
@@ -56,6 +71,8 @@ npm start
 - Frontend disponible en: `http://localhost:4200`
 
 ### 4. Acceder al sistema
+
+El seed crea estos usuarios para ingresar:
 
 | Usuario     | Contraseña        | Rol     |
 |-------------|-------------------|---------|
