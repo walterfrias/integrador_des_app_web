@@ -6,12 +6,12 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TareasService {
-  private base = 'http://localhost:3000/api/v1/proyectos';
+  private base = 'api/v1/proyectos';
 
   constructor(private http: HttpClient) {}
 
   crearTarea(idProyecto: number, tarea: { descripcion: string }) {
-    return this.http.post(`http://localhost:3000/api/v1/proyectos/${idProyecto}/tareas`, tarea);
+    return this.http.post(`${this.base}/${idProyecto}/tareas`, tarea);
   }
 
   actualizarTarea(idProyecto: number, idTarea: number, data: any): Observable<any> {
@@ -23,10 +23,10 @@ export class TareasService {
   }
 
   listarTodas(): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:3000/api/v1/proyectos/0/tareas`);
+    return this.http.get<any[]>(`${this.base}/0/tareas`);
   }
 
   listarPorProyecto(idProyecto: number): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:3000/api/v1/proyectos/${idProyecto}/tareas`);
+    return this.http.get<any[]>(`${this.base}/${idProyecto}/tareas`);
   }
 }

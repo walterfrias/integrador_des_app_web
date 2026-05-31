@@ -89,11 +89,14 @@
         </td>
         <td class="text-right">
           <div class="flex items-center justify-end gap-2">
-            <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[usuario.id, 'editar']"></button>
+            <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[usuario.id, 'editar']"
+              pTooltip="Editar" tooltipPosition="top"></button>
             @if (usuario.estado === 'ACTIVO') {
-              <button pButton icon="pi pi-ban" severity="danger" text size="small" (click)="confirmarBaja(usuario)"></button>
+              <button pButton icon="pi pi-ban" severity="danger" text size="small" (click)="confirmarBaja(usuario)"
+                pTooltip="Dar de baja" tooltipPosition="top"></button>
             } @else {
-              <button pButton icon="pi pi-check-circle" severity="success" text size="small" (click)="reactivar(usuario.id)"></button>
+              <button pButton icon="pi pi-undo" severity="warn" text size="small" (click)="reactivar(usuario.id)"
+                pTooltip="Reactivar" tooltipPosition="top"></button>
             }
           </div>
         </td>

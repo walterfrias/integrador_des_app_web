@@ -1,7 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from '../entities/cliente.entity';
+import { Proyecto } from '../entities/proyecto.entity';
 import { CreateClienteDto } from '../dtos/input/create-cliente.dto';
 import { UpdateClienteDto } from '../dtos/input/update-cliente.dto';
 import { ListClienteDTO } from '../dtos/output/list-cliente.dto';
@@ -12,6 +13,8 @@ export class ClientesService {
   constructor(
     @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
+    @InjectRepository(Proyecto)
+    private readonly proyectoRepository: Repository<Proyecto>,
   ) {}
 
   async listar(estado?: EstadosClientesEnum): Promise<ListClienteDTO[]> {
@@ -32,6 +35,17 @@ export class ClientesService {
     const cliente = await this.clienteRepository.findOneBy({ id });
     if (!cliente) throw new NotFoundException('Cliente no encontrado');
 
+    if (dto.estado === EstadosClientesEnum.BAJA) {
+      const proyectosAsociados = await this.proyectoRepository.count({
+        where: { cliente: { id } },
+      });
+      if (proyectosAsociados > 0) {
+        throw new BadRequestException(
+          'No se puede dar de baja el cliente porque tiene proyectos asociados',
+        );
+      }
+    }
+    
     await this.clienteRepository.update(id, dto);
   }
 }

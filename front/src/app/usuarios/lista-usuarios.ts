@@ -4,12 +4,13 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { UsuariosService, Usuario } from '../core/services/usuarios.service';
 
 @Component({
   selector: 'app-lista-usuarios',
-  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule],
+  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule, TooltipModule],
   providers: [ConfirmationService],
   templateUrl: './lista-usuarios.html',
 })

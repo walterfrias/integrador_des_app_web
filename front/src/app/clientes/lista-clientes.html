@@ -1,5 +1,11 @@
 <p-confirmDialog />
 
+@if (errorBaja()) {
+<div class="bg-red-50 dark:bg-red-950 text-red-600 text-sm px-4 py-3 rounded-lg mb-4 border border-red-200">
+    {{ errorBaja() }}
+</div>
+}
+
 <div class="flex items-center justify-between mb-6">
   <div>
     <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100">Clientes</h2>
@@ -76,11 +82,14 @@
         </td>
         <td class="text-right">
           <div class="flex items-center justify-end gap-2">
-            <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[cliente.id, 'editar']"></button>
+            <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[cliente.id, 'editar']"
+              pTooltip="Editar" tooltipPosition="top"></button>
             @if (cliente.estado === 'ACTIVO') {
-              <button pButton icon="pi pi-ban" severity="danger" text size="small" (click)="confirmarBaja(cliente)"></button>
+              <button pButton icon="pi pi-ban" severity="danger" text size="small" (click)="confirmarBaja(cliente)"
+                pTooltip="Dar de baja" tooltipPosition="top"></button>
             } @else {
-              <button pButton icon="pi pi-check-circle" severity="success" text size="small" (click)="reactivar(cliente.id)"></button>
+              <button pButton icon="pi pi-undo" severity="warn" text size="small" (click)="reactivar(cliente.id)"
+                pTooltip="Reactivar" tooltipPosition="top"></button>
             }
           </div>
         </td>
