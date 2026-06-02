@@ -1,4 +1,6 @@
-<div class="max-w-lg">
+<p-confirmDialog />
+
+<div class="max-w-2xl">
 
   <div class="flex items-center gap-3 mb-6">
     <a routerLink="/app/clientes" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
@@ -24,7 +26,9 @@
       </div>
     }
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col gap-5">
+    <!-- Datos del cliente -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()"
+        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col gap-5 mb-6">
 
       <div class="flex flex-col gap-1.5">
         <label for="nombre" class="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -39,7 +43,11 @@
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-1.5">
           <label for="cuit" class="text-sm font-medium text-slate-700 dark:text-slate-300">CUIT</label>
-          <input pInputText id="cuit" formControlName="cuit" placeholder="XX-XXXXXXXX-X" class="w-full" />
+          <p-inputmask id="cuit" formControlName="cuit" mask="99-999999-99"
+              placeholder="XX-XXXXXX-XX" styleClass="w-full" />
+          @if (form.get('cuit')?.invalid && form.get('cuit')?.touched) {
+            <small class="text-red-500">Formato inválido — debe ser XX-XXXXXX-XX (10 dígitos)</small>
+          }
         </div>
         <div class="flex flex-col gap-1.5">
           <label for="direccion" class="text-sm font-medium text-slate-700 dark:text-slate-300">Dirección</label>
@@ -49,74 +57,99 @@
 
       <div class="flex gap-3 pt-2">
         <button type="button" pButton label="Cancelar" severity="secondary" text routerLink="/app/clientes"></button>
-        <button type="submit" pButton [label]="esEdicion ? 'Guardar cambios' : 'Crear cliente'" [loading]="guardando()" [disabled]="form.invalid"></button>
+        <button type="submit" pButton [label]="esEdicion ? 'Guardar cambios' : 'Crear cliente'"
+            [loading]="guardando()" [disabled]="form.invalid"></button>
       </div>
-
     </form>
 
+    <!-- Sección contactos (solo en edición) -->
     @if (esEdicion) {
-      <div class="mt-8 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col gap-5">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Contactos</h3>
+      <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">Contactos</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {{ contactos().length }} contacto{{ contactos().length !== 1 ? 's' : '' }} registrado{{ contactos().length !== 1 ? 's' : '' }}
+            </p>
+          </div>
+          <button pButton icon="pi pi-plus" label="Agregar" size="small" (click)="abrirNuevoContacto()"></button>
         </div>
 
-        <form [formGroup]="contactoForm" (ngSubmit)="guardarContacto()" class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col gap-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Tipo <span class="text-red-500">*</span></label>
-              <p-select [options]="tiposContacto" formControlName="tipo" optionLabel="label" optionValue="value" styleClass="w-full"></p-select>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Valor <span class="text-red-500">*</span></label>
-              <input pInputText formControlName="valor" placeholder="Ej: 3442XXXXXX o email@..." class="w-full" />
-            </div>
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Observación</label>
-            <input pInputText formControlName="observacion" placeholder="Opcional (Ej: Llamar por la mañana)" class="w-full" />
-          </div>
-          <div class="flex justify-end gap-2 pt-2">
-            @if (contactoForm.get('id')?.value) {
-              <button type="button" pButton label="Cancelar" severity="secondary" text size="small" (click)="cancelarEdicionContacto()"></button>
-            }
-            <button type="submit" pButton [label]="contactoForm.get('id')?.value ? 'Actualizar contacto' : 'Agregar contacto'" size="small" [loading]="guardandoContacto()" [disabled]="contactoForm.invalid"></button>
-          </div>
-        </form>
-
-        @if (contactos().length > 0) {
-          <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mt-2">
-            <p-table [value]="contactos()" styleClass="p-datatable-sm" [rowHover]="true">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th class="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm">Tipo</th>
-                  <th class="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm">Valor</th>
-                  <th class="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm">Observación</th>
-                  <th class="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm w-24 text-center">Acciones</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-contacto>
-                <tr>
-                  <td class="text-sm">{{ contacto.tipo }}</td>
-                  <td class="text-sm">{{ contacto.valor }}</td>
-                  <td class="text-sm">{{ contacto.observacion || '-' }}</td>
-                  <td>
-                    <div class="flex justify-center gap-1">
-                      <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm p-button-secondary" (click)="prepararEdicionContacto(contacto)" title="Editar"></button>
-                      <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" (click)="eliminarContacto(contacto.id)" title="Eliminar"></button>
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
+        @if (contactos().length === 0) {
+          <div class="rounded-lg border border-dashed border-slate-200 dark:border-slate-700 py-8 text-center text-slate-400 dark:text-slate-500 text-sm">
+            Sin contactos registrados
           </div>
         } @else {
-          <div class="text-center text-sm text-slate-500 dark:text-slate-400 py-6 border border-dashed border-slate-300 dark:border-slate-700 rounded-lg mt-2">
-            Este cliente aún no tiene contactos registrados.
+          <div class="flex flex-col gap-2">
+            @for (c of contactos(); track c.id) {
+              <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+                <p-tag [value]="c.tipo" [severity]="severidadTipo(c.tipo)" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{{ c.valor }}</p>
+                  @if (c.observacion) {
+                    <p class="text-xs text-slate-400 dark:text-slate-500 truncate">{{ c.observacion }}</p>
+                  }
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
+                      pTooltip="Editar" tooltipPosition="top"
+                      (click)="abrirEditarContacto(c)"></button>
+                  <button pButton icon="pi pi-trash" severity="danger" text size="small"
+                      pTooltip="Eliminar" tooltipPosition="top"
+                      (click)="confirmarEliminarContacto(c)"></button>
+                </div>
+              </div>
+            }
           </div>
         }
+
       </div>
     }
-
   }
 
 </div>
+
+<!-- Dialog agregar / editar contacto -->
+<p-dialog
+    [header]="contactoEditando() ? 'Editar contacto' : 'Nuevo contacto'"
+    [(visible)]="dialogContacto"
+    [modal]="true"
+    styleClass="w-full max-w-sm"
+>
+  <form [formGroup]="formContacto" class="flex flex-col gap-4">
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Tipo <span class="text-red-500">*</span></label>
+      <p-select formControlName="tipo" [options]="tiposContacto" optionLabel="label" optionValue="value" styleClass="w-full" />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Valor <span class="text-red-500">*</span></label>
+      <input pInputText formControlName="valor"
+          [type]="tipoContactoActual === 'EMAIL' ? 'email' : 'text'"
+          [placeholder]="tipoContactoActual === 'EMAIL' ? 'usuario@ejemplo.com' : '11 1234-5678'"
+          class="w-full" />
+      @if (formContacto.get('valor')?.errors?.['required'] && formContacto.get('valor')?.touched) {
+        <small class="text-red-500">El valor es requerido</small>
+      }
+      @if (formContacto.get('valor')?.errors?.['email'] && formContacto.get('valor')?.touched) {
+        <small class="text-red-500">Email inválido</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Observación</label>
+      <input pInputText formControlName="observacion" placeholder="Opcional" class="w-full" />
+    </div>
+
+  </form>
+
+  <div class="flex justify-end gap-2 pt-2" footer>
+    <button pButton label="Cancelar" severity="secondary" text (click)="dialogContacto.set(false)"></button>
+    <button pButton [label]="contactoEditando() ? 'Guardar' : 'Agregar'"
+        [loading]="guardandoContacto()"
+        [disabled]="formContacto.invalid"
+        (click)="guardarContacto()"></button>
+  </div>
+</p-dialog>

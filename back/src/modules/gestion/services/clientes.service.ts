@@ -30,10 +30,22 @@ export class ClientesService {
   async obtenerPorId(id: number): Promise<any> {
     const cliente = await this.clienteRepository.findOne({
       where: { id },
-      relations: ['contactos'], 
+      relations: ['contactos'],
     });
     if (!cliente) throw new NotFoundException('Cliente no encontrado');
-    return cliente;
+    return {
+      id: cliente.id,
+      nombre: cliente.nombre,
+      cuit: cliente.cuit,
+      direccion: cliente.direccion,
+      estado: cliente.estado,
+      contactos: (cliente.contactos ?? []).map(c => ({
+        id: c.id,
+        tipo: c.tipo,
+        valor: c.valor,
+        observacion: c.observacion ?? null,
+      })),
+    };
   }
   
   async crear(dto: CreateClienteDto): Promise<{ id: number }> {

@@ -68,16 +68,6 @@
       </div>
     </div>
 
-    <!-- Barra apilada: tareas por responsable -->
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
-      <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-        Carga de trabajo por responsable
-      </h3>
-      <div style="height: 280px">
-        <p-chart type="bar" [data]="chartBarraApilada()" [options]="chartOpcionesApilada" />
-      </div>
-    </div>
-
   }
 
   <!-- Area chart: actividad semanal acumulada -->
@@ -93,17 +83,17 @@
     </div>
   }
 
-  <!-- Barras: creadas vs finalizadas por semana -->
-  @if (chartDelta()) {
+  @if (stats()) {
+    <!-- Barra apilada: tareas por responsable -->
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
-      <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
-        Creadas vs finalizadas por semana
+      <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
+        Carga de trabajo por responsable
       </h3>
-      <p class="text-xs text-slate-400 dark:text-slate-500 mb-4">Comparación de tareas creadas y finalizadas cada semana</p>
-      <div style="height: 260px">
-        <p-chart type="bar" [data]="chartDelta()" [options]="chartOpcionesDelta" />
+      <div style="height: 280px">
+        <p-chart type="bar" [data]="chartBarraApilada()" [options]="chartOpcionesApilada" />
       </div>
     </div>
   }
+
 
 </div>

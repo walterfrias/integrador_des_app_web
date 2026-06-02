@@ -29,4 +29,12 @@ export class TareasService {
   listarPorProyecto(idProyecto: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/${idProyecto}/tareas`);
   }
+
+  asignarResponsable(idProyecto: number, idTarea: number, idUsuario: number): Observable<any> {
+    return this.http.patch<any>(`${this.base}/${idProyecto}/tareas/${idTarea}/responsable`, { usuarioId: idUsuario });
+  }
+
+  quitarResponsable(idProyecto: number, idTarea: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${idProyecto}/tareas/${idTarea}/responsable`);
+  }
 }

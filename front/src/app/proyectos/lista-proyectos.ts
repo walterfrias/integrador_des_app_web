@@ -1,12 +1,9 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
-import { SelectModule } from 'primeng/select';
-import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
@@ -15,8 +12,8 @@ import { ProyectosService, ListProyectoDTO } from '../core/services/proyectos.se
 @Component({
     selector: 'app-lista-proyectos',
     imports: [
-        RouterLink, DatePipe, FormsModule,
-        TableModule, TagModule, ButtonModule, SelectModule, InputTextModule, TooltipModule, ConfirmDialogModule,
+        RouterLink, DatePipe,
+        TableModule, TagModule, ButtonModule, TooltipModule, ConfirmDialogModule,
     ],
     providers: [ConfirmationService],
     templateUrl: './lista-proyectos.html',
@@ -45,13 +42,7 @@ export class ListaProyectosComponent implements OnInit {
             return true;
         });
     });
-    estados = [
-        { label: 'Todos', value: 'TODOS' },
-        { label: 'Activo', value: 'ACTIVO' },
-        { label: 'Atrasado', value: 'ATRASADO' },
-        { label: 'Finalizado', value: 'FINALIZADO' },
-        { label: 'Baja', value: 'BAJA' },
-    ];
+    readonly estados = ['TODOS', 'ACTIVO', 'ATRASADO', 'FINALIZADO', 'BAJA'];
     ngOnInit() { this.cargarProyectos(); }
     cargarProyectos() {
         this.loading.set(true);
@@ -82,5 +73,30 @@ export class ListaProyectosComponent implements OnInit {
             case 'BAJA': return 'danger';
             default: return 'warn';
         }
+    }
+
+    exportarCSV() {
+        const encabezado = ['Nombre', 'Estado', 'Cliente', 'Fecha límite', 'Atrasado'];
+        const filas = this.proyectosFiltrados().map(p => [
+            p.nombre,
+            p.estado,
+            p.cliente?.nombre ?? '—',
+            p.fechaLimite ? new Date(p.fechaLimite).toLocaleDateString('es-AR') : '—',
+            p.retraso ? 'Sí' : 'No',
+        ]);
+        this.descargarCSV([encabezado, ...filas], 'proyectos.csv');
+    }
+
+    private descargarCSV(filas: string[][], nombre: string) {
+        const contenido = filas
+            .map(f => f.map(c => `"${(c ?? '').replace(/"/g, '""')}"`).join(','))
+            .join('\n');
+        const blob = new Blob(['﻿' + contenido], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nombre;
+        a.click();
+        URL.revokeObjectURL(url);
     }
 }

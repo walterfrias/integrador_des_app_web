@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Patch,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { TareasService } from '../services/tareas.service';
@@ -51,5 +52,21 @@ export class TareasController {
   @ApiOperation({ summary: 'Eliminar tarea' })
   async eliminar(@Param('id') id: number) {
     return await this.tareasService.eliminar(id);
+  }
+
+  @Patch(':id/responsable')
+  @ApiOperation({ summary: 'Asignar responsable a tarea (RF31)' })
+  async asignarResponsable(
+    @Param('id') id: number,
+    @Body() body: { usuarioId: number },
+  ) {
+    return await this.tareasService.asignarResponsable(id, body.usuarioId);
+  }
+
+  @Delete(':id/responsable')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Quitar responsable de tarea (RF32)' })
+  async quitarResponsable(@Param('id') id: number) {
+    return await this.tareasService.quitarResponsable(id);
   }
 }

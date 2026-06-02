@@ -23,6 +23,11 @@ export class MainLayoutComponent {
   mobileMenuOpen = signal(false);
   darkMode = signal(localStorage.getItem('darkMode') === 'true');
 
+  readonly usuario = this.auth.getUsuario();
+  readonly iniciales = this.usuario?.nombre
+    ? this.usuario.nombre.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+    : '?';
+
   navItems: NavItem[] = [
     { label: 'Dashboard', icon: 'pi pi-home', route: '/app/dashboard' },
     { label: 'Proyectos', icon: 'pi pi-briefcase', route: '/app/proyectos' },

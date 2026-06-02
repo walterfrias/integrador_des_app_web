@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TareasService } from '../core/services/tareas.service';
 
 @Component({
@@ -10,14 +11,109 @@ import { TareasService } from '../core/services/tareas.service';
   templateUrl: './tareas-proyecto.component.html',
 })
 export class TareasProyectoComponent implements OnInit {
-  columnas: { [key: string]: any[] } = {};
+  private tareasService = inject(TareasService);
+  private router = inject(Router);
 
+  todasLasTareas = signal<any[]>([]);
+  busqueda = signal('');
+  filtroEstado = signal('TODOS');
+  filtroProyecto = signal('TODOS');
+  filtroUsuario = signal('TODOS');
   nuevaTareaTexto: { [key: string]: string } = {};
 
-  constructor(
-    private tareasService: TareasService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  readonly estados = ['TODOS', 'PENDIENTE', 'FINALIZADA', 'BAJA'];
+
+  private readonly PALETA = [
+    'bg-indigo-500', 'bg-violet-500', 'bg-sky-500',
+    'bg-emerald-500', 'bg-amber-500', 'bg-rose-500',
+    'bg-pink-500', 'bg-teal-500',
+  ];
+
+  private idProyectoPorNombre = computed(() => {
+    const mapa = new Map<string, number>();
+    this.todasLasTareas().forEach(t => {
+      if (t.proyecto?.nombre && t.proyecto?.id) {
+        mapa.set(t.proyecto.nombre, t.proyecto.id);
+      }
+    });
+    return mapa;
+  });
+
+  proyectosDisponibles = computed(() => {
+    const nombres = new Set<string>();
+    this.todasLasTareas().forEach(t => {
+      if (t.proyecto?.nombre) nombres.add(t.proyecto.nombre);
+    });
+    return Array.from(nombres).sort();
+  });
+
+  usuariosDisponibles = computed(() => {
+    const lista: { id: string; nombreCompleto: string; iniciales: string; color: string }[] = [];
+    const seen = new Set<string>();
+    let idx = 0;
+    this.todasLasTareas().forEach(t => {
+      if (t.responsable) {
+        const key = String(t.responsable.id);
+        if (!seen.has(key)) {
+          seen.add(key);
+          const nombre = t.responsable.nombre ?? '';
+          const apellido = t.responsable.apellido ?? '';
+          lista.push({
+            id: key,
+            nombreCompleto: [nombre, apellido].filter(Boolean).join(' '),
+            iniciales: ((nombre[0] ?? '') + (apellido[0] ?? '')).toUpperCase() || '?',
+            color: this.PALETA[idx++ % this.PALETA.length],
+          });
+        }
+      }
+    });
+    return lista;
+  });
+
+  private mapaColores = computed(() => {
+    const m = new Map<string, string>();
+    this.usuariosDisponibles().forEach(u => m.set(u.id, u.color));
+    return m;
+  });
+
+  tieneTareasSinAsignar = computed(() =>
+    this.todasLasTareas().some(t => !t.responsable)
+  );
+
+  tareasFiltradas = computed(() => {
+    const q = this.busqueda().toLowerCase().trim();
+    const estado = this.filtroEstado();
+    const proyecto = this.filtroProyecto();
+    const usuario = this.filtroUsuario();
+    return this.todasLasTareas().filter(t => {
+      const matchEstado = estado === 'TODOS' || t.estado === estado;
+      const matchProyecto = proyecto === 'TODOS' || t.proyecto?.nombre === proyecto;
+      const matchUsuario = usuario === 'TODOS'
+        || (usuario === 'SIN_ASIGNAR' && !t.responsable)
+        || (t.responsable && String(t.responsable.id) === usuario);
+      const matchQ = !q
+        || t.descripcion?.toLowerCase().includes(q)
+        || t.proyecto?.nombre?.toLowerCase().includes(q);
+      return matchEstado && matchProyecto && matchUsuario && matchQ;
+    });
+  });
+
+  columnasFiltradas = computed(() => {
+    const cols: { [key: string]: any[] } = {};
+    this.tareasFiltradas().forEach(t => {
+      const nombreP = t.proyecto?.nombre || 'General';
+      if (!cols[nombreP]) cols[nombreP] = [];
+      cols[nombreP].push(t);
+    });
+    return cols;
+  });
+
+  hayFiltrosActivos = computed(() =>
+    this.busqueda() !== ''
+    || this.filtroEstado() !== 'TODOS'
+    || this.filtroProyecto() !== 'TODOS'
+    || this.filtroUsuario() !== 'TODOS'
+  );
 
   ngOnInit(): void {
     this.cargar();
@@ -25,89 +121,57 @@ export class TareasProyectoComponent implements OnInit {
 
   cargar() {
     this.tareasService.listarTodas().subscribe({
-      next: (data: any[]) => {
-        this.columnas = {};
-        data.forEach((t) => {
-          const nombreP = t.proyecto?.nombre || 'General';
-          if (!this.columnas[nombreP]) this.columnas[nombreP] = [];
-          this.columnas[nombreP].push(t);
-        });
-        this.cdr.detectChanges();
-      },
+      next: (data: any[]) => this.todasLasTareas.set(data),
       error: (err) => console.error('Error al cargar:', err),
     });
   }
 
   getNombres(): string[] {
-    return Object.keys(this.columnas);
+    return Object.keys(this.columnasFiltradas());
+  }
+
+  limpiarFiltros() {
+    this.busqueda.set('');
+    this.filtroEstado.set('TODOS');
+    this.filtroProyecto.set('TODOS');
+    this.filtroUsuario.set('TODOS');
+  }
+
+  filtrarPorUsuario(event: MouseEvent, idUsuario: string) {
+    event.stopPropagation();
+    this.filtroUsuario.set(idUsuario);
+  }
+
+  colorDeUsuario(id: string): string {
+    return this.mapaColores().get(id) ?? 'bg-slate-400';
+  }
+
+  inicialesDeResponsable(responsable: any): string {
+    const n = responsable?.nombre?.[0] ?? '';
+    const a = responsable?.apellido?.[0] ?? '';
+    return (n + a).toUpperCase() || '?';
+  }
+
+  idStr(id: any): string {
+    return String(id);
+  }
+
+  irAProyecto(idProyecto: number | undefined) {
+    if (!idProyecto) return;
+    this.router.navigate(['/app/proyectos', idProyecto]);
   }
 
   agregarTarea(nombreProyecto: string) {
     const descripcion = this.nuevaTareaTexto[nombreProyecto]?.trim();
     if (!descripcion) return;
-
-    const tareaExistente = this.columnas[nombreProyecto].find((t) => t.proyecto?.id);
-    const idProyecto = tareaExistente?.proyecto?.id;
-
-    if (!idProyecto) {
-      console.error('ID de proyecto no encontrado');
-      return;
-    }
-
+    const idProyecto = this.idProyectoPorNombre().get(nombreProyecto);
+    if (!idProyecto) return;
     this.tareasService.crearTarea(idProyecto, { descripcion }).subscribe({
       next: () => {
         this.nuevaTareaTexto[nombreProyecto] = '';
         this.cargar();
       },
       error: (err) => console.error('Error al crear la tarea:', err),
-    });
-  }
-
-  eliminarTarea(idTarea: number) {
-    this.tareasService.eliminarTarea(0, idTarea).subscribe(() => this.cargar());
-  }
-
-  actualizarEstado(tarea: any, event: any) {
-    const nuevoEstado = event.target.value;
-    const idProyecto = tarea.proyecto?.id || 0;
-    const tareaActualizada = {
-      descripcion: tarea.descripcion,
-      estado: nuevoEstado,
-    };
-
-    this.tareasService.actualizarTarea(idProyecto, tarea.id, tareaActualizada).subscribe({
-      next: () => {
-        console.log('Estado actualizado correctamente');
-        this.cargar();
-      },
-      error: (err) => console.error('Error al actualizar:', err),
-    });
-  }
-  
-  textoEdicion: string = '';
-  tareaEditando: any = null;
-
-  // Método para activar la edición
-  editarTarea(tarea: any) {
-    this.tareaEditando = tarea;
-    this.textoEdicion = tarea.descripcion;
-  }
-
-  // Método para guardar
-  guardarEdicion(tarea: any) {
-    const idProyecto = tarea.proyecto?.id || 0;
-
-    const data = {
-      descripcion: this.textoEdicion,
-      estado: tarea.estado,
-    };
-
-    this.tareasService.actualizarTarea(idProyecto, tarea.id, data).subscribe({
-      next: () => {
-        this.tareaEditando = null;
-        this.cargar();
-      },
-      error: (err) => console.error('Error al editar:', err),
     });
   }
 }

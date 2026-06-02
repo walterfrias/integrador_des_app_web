@@ -93,7 +93,7 @@ export class ProyectosService {
     async obtener(id: number): Promise<ProyectoDTO> {
         const proyecto = await this.proyectoRepository.findOne({
             where: { id },
-            relations: { cliente: true, tareas: true },
+            relations: { cliente: true, tareas: { responsable: true } },
         });
         if (!proyecto) throw new NotFoundException('Proyecto no encontrado');
         return {

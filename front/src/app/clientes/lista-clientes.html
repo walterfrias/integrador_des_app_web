@@ -68,19 +68,20 @@
         <th class="text-slate-600 dark:text-slate-300">CUIT</th>
         <th class="text-slate-600 dark:text-slate-300">Dirección</th>
         <th class="text-slate-600 dark:text-slate-300">Estado</th>
-        <th class="text-slate-600 dark:text-slate-300 text-right">Acciones</th>
+        <th class="text-slate-600 dark:text-slate-300" style="text-align: right">Acciones</th>
       </tr>
     </ng-template>
 
     <ng-template #body let-cliente>
-      <tr>
+      <tr class="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+          [routerLink]="[cliente.id, 'editar']">
         <td class="font-medium text-slate-800 dark:text-slate-100">{{ cliente.nombre }}</td>
         <td class="text-slate-600 dark:text-slate-400 text-sm">{{ cliente.cuit ?? '—' }}</td>
         <td class="text-slate-600 dark:text-slate-400 text-sm">{{ cliente.direccion ?? '—' }}</td>
         <td>
           <p-tag [value]="cliente.estado" [severity]="severidadEstado(cliente.estado)" />
         </td>
-        <td class="text-right">
+        <td class="text-right" (click)="$event.stopPropagation()">
           <div class="flex items-center justify-end gap-2">
             <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[cliente.id, 'editar']"
               pTooltip="Editar" tooltipPosition="top"></button>

@@ -5,19 +5,16 @@ export interface Contacto {
   id: number;
   tipo: 'TELEFONO' | 'EMAIL';
   valor: string;
-  observacion: string | null;
+  observacion?: string | null;
 }
 
-export interface CreateContactoPayload {
-  tipo: 'TELEFONO' | 'EMAIL';
-  valor: string;
-  observacion?: string;
-}
-
-export interface UpdateContactoPayload {
-  tipo?: 'TELEFONO' | 'EMAIL';
-  valor?: string;
-  observacion?: string;
+export interface ClienteDetalle {
+  id: number;
+  nombre: string;
+  cuit: string | null;
+  direccion: string | null;
+  estado: 'ACTIVO' | 'BAJA';
+  contactos: Contacto[];
 }
 
 export interface Cliente {
@@ -25,8 +22,7 @@ export interface Cliente {
   nombre: string;
   cuit: string | null;
   direccion: string | null;
-  estado: 'ACTIVO' | 'INACTIVO';
-  contactos?: Contacto[]; // <-- Única modificación a lo existente: le avisamos que puede tener contactos
+  estado: 'ACTIVO' | 'BAJA';
 }
 
 export interface CreateClientePayload {
@@ -42,6 +38,12 @@ export interface UpdateClientePayload {
   estado?: string;
 }
 
+export interface ContactoPayload {
+  tipo: string;
+  valor: string;
+  observacion?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ClientesService {
   private http = inject(HttpClient);
@@ -52,7 +54,7 @@ export class ClientesService {
   }
 
   obtenerPorId(id: number) {
-    return this.http.get<Cliente>(`${this.base}/${id}`);
+    return this.http.get<ClienteDetalle>(`${this.base}/${id}`);
   }
 
   crear(data: CreateClientePayload) {
@@ -63,17 +65,15 @@ export class ClientesService {
     return this.http.put<void>(`${this.base}/${id}`, data);
   }
 
-  // --- PASO 2: NUEVOS MÉTODOS HTTP PARA CONTACTOS ---
-  agregarContacto(clienteId: number, data: CreateContactoPayload) {
-    return this.http.post<{ id: number }>(`${this.base}/${clienteId}/contactos`, data);
+  agregarContacto(idCliente: number, data: ContactoPayload) {
+    return this.http.post<{ id: number }>(`${this.base}/${idCliente}/contactos`, data);
   }
 
-  modificarContacto(contactoId: number, data: UpdateContactoPayload) {
-    return this.http.put<void>(`${this.base}/contactos/${contactoId}`, data);
+  modificarContacto(idContacto: number, data: ContactoPayload) {
+    return this.http.put<void>(`${this.base}/contactos/${idContacto}`, data);
   }
 
-  eliminarContacto(contactoId: number) {
-    return this.http.delete<void>(`${this.base}/contactos/${contactoId}`);
+  eliminarContacto(idContacto: number) {
+    return this.http.delete<void>(`${this.base}/contactos/${idContacto}`);
   }
-  // --------------------------------------------------
 }

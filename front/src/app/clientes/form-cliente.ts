@@ -1,15 +1,32 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select'; 
-import { TableModule } from 'primeng/table'; 
-import { ClientesService, CreateClientePayload, UpdateClientePayload, Contacto, CreateContactoPayload, UpdateContactoPayload } from '../core/services/clientes.service'; // <-- MODIFICADO
+import { InputMaskModule } from 'primeng/inputmask';
+import { SelectModule } from 'primeng/select';
+import { DialogModule } from 'primeng/dialog';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import {
+  ClientesService,
+  Contacto,
+  ContactoPayload,
+  CreateClientePayload,
+  UpdateClientePayload,
+} from '../core/services/clientes.service';
 
 @Component({
   selector: 'app-form-cliente',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, SelectModule, TableModule, RouterLink], 
+  imports: [
+    ReactiveFormsModule, FormsModule, RouterLink,
+    ButtonModule, InputTextModule, InputMaskModule, SelectModule, DialogModule,
+    TagModule, TooltipModule, ConfirmDialogModule,
+  ],
+  providers: [ConfirmationService],
   templateUrl: './form-cliente.html',
 })
 export class FormClienteComponent implements OnInit {
@@ -17,76 +34,93 @@ export class FormClienteComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private clientesService = inject(ClientesService);
+  private confirmationService = inject(ConfirmationService);
 
   id: number | null = null;
   loading = signal(false);
   guardando = signal(false);
   errorMessage = signal('');
 
+  // Contactos
   contactos = signal<Contacto[]>([]);
+  dialogContacto = signal(false);
+  contactoEditando = signal<Contacto | null>(null);
   guardandoContacto = signal(false);
 
-  tiposContacto = [
+  readonly tiposContacto = [
     { label: 'Teléfono', value: 'TELEFONO' },
-    { label: 'Email', value: 'EMAIL' }
+    { label: 'Email', value: 'EMAIL' },
   ];
 
-  contactoForm = this.fb.group({
-    id: [null as number | null],
-    tipo: ['TELEFONO' as 'TELEFONO' | 'EMAIL', Validators.required],
+  readonly CUIT_PATTERN = /^\d{2}-\d{6}-\d{2}$/;
+
+  form = this.fb.group({
+    nombre: ['', Validators.required],
+    cuit: ['', Validators.pattern(/^\d{2}-\d{6}-\d{2}$/)],
+    direccion: [''],
+  });
+
+  formContacto = this.fb.group({
+    tipo: ['TELEFONO', Validators.required],
     valor: ['', Validators.required],
     observacion: [''],
   });
 
-  form = this.fb.group({
-    nombre: ['', Validators.required],
-    cuit: [''],
-    direccion: [''],
-  });
+  get tipoContactoActual(): string {
+    return this.formContacto.get('tipo')?.value ?? 'TELEFONO';
+  }
 
   get esEdicion(): boolean {
     return this.id !== null;
   }
 
+  private actualizarValidadoresTipo(tipo: string) {
+    const ctrl = this.formContacto.get('valor')!;
+    ctrl.setValidators(tipo === 'EMAIL'
+      ? [Validators.required, Validators.email]
+      : [Validators.required]);
+    ctrl.updateValueAndValidity();
+  }
+
   ngOnInit() {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (!idParam) return;
+    this.formContacto.get('tipo')!.valueChanges.subscribe(tipo => {
+      this.actualizarValidadoresTipo(tipo ?? 'TELEFONO');
+    });
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('id');
+      if (!idParam) return;
 
-    this.id = +idParam;
-    this.loading.set(true);
+      this.id = +idParam;
+      this.loading.set(true);
 
-    this.clientesService.obtenerPorId(this.id).subscribe({
-      next: cliente => {
-        this.form.patchValue({
-          nombre: cliente.nombre,
-          cuit: cliente.cuit ?? '',
-          direccion: cliente.direccion ?? '',
-        });
-        
-        if (cliente.contactos) {
-          this.contactos.set(cliente.contactos);
-        }
-  
-        
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
+      this.clientesService.obtenerPorId(this.id).subscribe({
+        next: cliente => {
+          this.form.patchValue({
+            nombre: cliente.nombre,
+            cuit: cliente.cuit ?? '',
+            direccion: cliente.direccion ?? '',
+          });
+          this.contactos.set(cliente.contactos ?? []);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.errorMessage.set('No se pudo cargar el cliente');
+          this.loading.set(false);
+        },
+      });
     });
   }
 
   onSubmit() {
     if (this.form.invalid) return;
-
     this.guardando.set(true);
     this.errorMessage.set('');
-
     const { nombre, cuit, direccion } = this.form.value;
 
     if (this.esEdicion) {
       const data: UpdateClientePayload = { nombre: nombre! };
       if (cuit) data.cuit = cuit;
       if (direccion) data.direccion = direccion;
-
       this.clientesService.actualizar(this.id!, data).subscribe({
         next: () => this.router.navigate(['/app/clientes']),
         error: () => {
@@ -98,7 +132,6 @@ export class FormClienteComponent implements OnInit {
       const data: CreateClientePayload = { nombre: nombre! };
       if (cuit) data.cuit = cuit;
       if (direccion) data.direccion = direccion;
-
       this.clientesService.crear(data).subscribe({
         next: () => this.router.navigate(['/app/clientes']),
         error: () => {
@@ -109,59 +142,66 @@ export class FormClienteComponent implements OnInit {
     }
   }
 
-  prepararEdicionContacto(contacto: Contacto) {
-    this.contactoForm.patchValue({
-      id: contacto.id,
-      tipo: contacto.tipo,
-      valor: contacto.valor,
-      observacion: contacto.observacion ?? ''
-    });
+  // ── Contactos ─────────────────────────────────────────────────────────────
+
+  abrirNuevoContacto() {
+    this.contactoEditando.set(null);
+    this.formContacto.reset({ tipo: 'TELEFONO', valor: '', observacion: '' });
+    this.actualizarValidadoresTipo('TELEFONO');
+    this.dialogContacto.set(true);
   }
 
-  cancelarEdicionContacto() {
-    this.contactoForm.reset({ id: null, tipo: 'TELEFONO', valor: '', observacion: '' });
+  abrirEditarContacto(c: Contacto) {
+    this.contactoEditando.set(c);
+    this.formContacto.patchValue({ tipo: c.tipo, valor: c.valor, observacion: c.observacion ?? '' });
+    this.actualizarValidadoresTipo(c.tipo);
+    this.dialogContacto.set(true);
   }
 
   guardarContacto() {
-    
-    if (this.contactoForm.invalid || !this.id) return;
-
+    if (this.formContacto.invalid) return;
     this.guardandoContacto.set(true);
-    const { id, tipo, valor, observacion } = this.contactoForm.value;
+    const { tipo, valor, observacion } = this.formContacto.value;
+    const data: ContactoPayload = { tipo: tipo!, valor: valor! };
+    if (observacion) data.observacion = observacion;
 
-    if (id) {
-      const payload: UpdateContactoPayload = { tipo: tipo as any, valor: valor! };
-      if (observacion) payload.observacion = observacion;
+    const ok = () => {
+      this.dialogContacto.set(false);
+      this.guardandoContacto.set(false);
+      this.recargarContactos();
+    };
+    const err = () => this.guardandoContacto.set(false);
 
-      this.clientesService.modificarContacto(id, payload).subscribe({
-        next: () => {
-          this.contactos.update(ctxs => ctxs.map(c => c.id === id ? { ...c, tipo: tipo as any, valor: valor!, observacion: observacion || null } : c));
-          this.cancelarEdicionContacto();
-          this.guardandoContacto.set(false);
-        },
-        error: () => this.guardandoContacto.set(false)
-      });
+    const editando = this.contactoEditando();
+    if (editando) {
+      this.clientesService.modificarContacto(editando.id, data).subscribe({ next: ok, error: err });
     } else {
-      const payload: CreateContactoPayload = { tipo: tipo as any, valor: valor! };
-      if (observacion) payload.observacion = observacion;
-
-      this.clientesService.agregarContacto(this.id, payload).subscribe({
-        next: (res) => {
-          this.contactos.update(ctxs => [...ctxs, { id: res.id, tipo: tipo as any, valor: valor!, observacion: observacion || null }]);
-          this.cancelarEdicionContacto();
-          this.guardandoContacto.set(false);
-        },
-        error: () => this.guardandoContacto.set(false)
-      });
+      this.clientesService.agregarContacto(this.id!, data).subscribe({ next: ok, error: err });
     }
   }
 
-  eliminarContacto(id: number) {
-    if (!confirm('¿Estás seguro de eliminar este contacto?')) return;
-    this.clientesService.eliminarContacto(id).subscribe({
-      next: () => {
-        this.contactos.update(ctxs => ctxs.filter(c => c.id !== id));
-      }
+  confirmarEliminarContacto(c: Contacto) {
+    this.confirmationService.confirm({
+      message: `¿Eliminar el contacto "${c.valor}"?`,
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.clientesService.eliminarContacto(c.id).subscribe({
+          next: () => this.recargarContactos(),
+        });
+      },
     });
+  }
+
+  private recargarContactos() {
+    this.clientesService.obtenerPorId(this.id!).subscribe({
+      next: c => this.contactos.set(c.contactos ?? []),
+    });
+  }
+
+  severidadTipo(tipo: string): 'info' | 'success' {
+    return tipo === 'EMAIL' ? 'success' : 'info';
   }
 }

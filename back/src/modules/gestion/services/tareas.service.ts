@@ -70,6 +70,7 @@ export class TareasService {
     return await this.tareaRepository
       .createQueryBuilder('tarea')
       .leftJoinAndSelect('tarea.proyecto', 'proyecto')
+      .leftJoinAndSelect('tarea.responsable', 'responsable')
       .orderBy('tarea.id', 'ASC')
       .getMany();
   }

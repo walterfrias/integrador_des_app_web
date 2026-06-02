@@ -76,19 +76,22 @@
         <th class="text-slate-600 dark:text-slate-300">Nombre</th>
         <th class="text-slate-600 dark:text-slate-300">Rol</th>
         <th class="text-slate-600 dark:text-slate-300">Estado</th>
-        <th class="text-slate-600 dark:text-slate-300 text-right">Acciones</th>
+        <th class="text-slate-600 dark:text-slate-300" style="text-align: right">Acciones</th>
       </tr>
     </ng-template>
 
     <ng-template #body let-usuario>
-      <tr>
+      <tr class="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+          [routerLink]="[usuario.id, 'detalle']">
         <td class="font-medium text-slate-800 dark:text-slate-100">{{ usuario.nombre }}{{ usuario.apellido ? ' ' + usuario.apellido : '' }}</td>
         <td class="text-slate-600 dark:text-slate-400 text-sm">{{ usuario.rol }}</td>
         <td>
           <p-tag [value]="usuario.estado" [severity]="severidadEstado(usuario.estado)" />
         </td>
-        <td class="text-right">
+        <td class="text-right" (click)="$event.stopPropagation()">
           <div class="flex items-center justify-end gap-2">
+            <button pButton icon="pi pi-eye" severity="info" text size="small" [routerLink]="[usuario.id, 'detalle']"
+              pTooltip="Ver detalle" tooltipPosition="top"></button>
             <button pButton icon="pi pi-pencil" severity="secondary" text size="small" [routerLink]="[usuario.id, 'editar']"
               pTooltip="Editar" tooltipPosition="top"></button>
             @if (usuario.estado === 'ACTIVO') {

@@ -1,8 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { TableModule } from 'primeng/table';
+import { NgClass } from '@angular/common';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -13,12 +13,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ProyectosService, ProyectoDTO } from '../core/services/proyectos.service';
 import { TareasService } from '../core/services/tareas.service';
+import { UsuariosService, Usuario } from '../core/services/usuarios.service';
 
 @Component({
     selector: 'app-detalle-proyecto',
     imports: [
-        RouterLink, DatePipe,
-        TableModule, TagModule, ButtonModule, DialogModule, TooltipModule, InputTextModule, SelectModule,
+        RouterLink, DatePipe, NgClass,
+        TagModule, ButtonModule, DialogModule, TooltipModule, InputTextModule, SelectModule,
         ReactiveFormsModule, ConfirmDialogModule,
     ],
     providers: [ConfirmationService],
@@ -28,12 +29,17 @@ export class DetalleProyectoComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private proyectosService = inject(ProyectosService);
     private tareasService = inject(TareasService);
+    private usuariosService = inject(UsuariosService);
     private fb = inject(FormBuilder);
     private confirmationService = inject(ConfirmationService);
     private router = inject(Router);
 
     proyecto = signal<ProyectoDTO | null>(null);
     loading = signal(true);
+
+    usuariosActivos = signal<Usuario[]>([]);
+    dialogResponsable = signal(false);
+    tareaParaResponsable = signal<any>(null);
 
 
     dialogTarea = signal(false);
@@ -48,12 +54,68 @@ export class DetalleProyectoComponent implements OnInit {
     estadosTarea = [
         { label: 'Pendiente', value: 'PENDIENTE' },
         { label: 'Finalizada', value: 'FINALIZADA' },
+        { label: 'Baja', value: 'BAJA' },
     ];
+
+    filtroEstado = signal('TODOS');
+    filtroResponsable = signal('TODOS');
+
+    private readonly PALETA = ['bg-indigo-500', 'bg-violet-500', 'bg-sky-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500'];
+
+    responsablesEnProyecto = computed(() => {
+        const lista: { id: string; nombreCompleto: string; iniciales: string; color: string }[] = [];
+        const seen = new Set<string>();
+        let idx = 0;
+        (this.proyecto()?.tareas ?? []).forEach(t => {
+            if (t.responsable) {
+                const key = String(t.responsable.id);
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    const n = t.responsable.nombre ?? '';
+                    const a = t.responsable.apellido ?? '';
+                    lista.push({
+                        id: key,
+                        nombreCompleto: [n, a].filter(Boolean).join(' '),
+                        iniciales: ((n[0] ?? '') + (a[0] ?? '')).toUpperCase() || '?',
+                        color: this.PALETA[idx++ % this.PALETA.length],
+                    });
+                }
+            }
+        });
+        return lista;
+    });
+
+    private mapaColoresResp = computed(() => {
+        const m = new Map<string, string>();
+        this.responsablesEnProyecto().forEach(r => m.set(r.id, r.color));
+        return m;
+    });
+
+    tieneTareasSinResponsable = computed(() =>
+        (this.proyecto()?.tareas ?? []).some(t => !t.responsable)
+    );
+
+    tareasFiltradas = computed(() => {
+        const resp = this.filtroResponsable();
+        const tareas = this.proyecto()?.tareas ?? [];
+        if (resp === 'TODOS') return tareas;
+        if (resp === 'SIN_ASIGNAR') return tareas.filter(t => !t.responsable);
+        return tareas.filter(t => t.responsable && String(t.responsable.id) === resp);
+    });
+
+    tareasPorEstado = computed(() => {
+        const mapa: Record<string, any[]> = { PENDIENTE: [], FINALIZADA: [], BAJA: [] };
+        this.tareasFiltradas().forEach(t => { if (mapa[t.estado]) mapa[t.estado].push(t); });
+        return mapa;
+    });
 
     ngOnInit() {
         const id = Number(this.route.snapshot.paramMap.get('id'));
         if (!id) { this.router.navigate(['/app/proyectos']); return; }
         this.cargar(id);
+        this.usuariosService.listar().subscribe({
+            next: (lista) => this.usuariosActivos.set(lista.filter(u => u.estado === 'ACTIVO')),
+        });
     }
 
     private cargar(id: number) {
@@ -136,5 +198,70 @@ export class DetalleProyectoComponent implements OnInit {
             case 'PENDIENTE': return 'warn';
             default: return 'warn';
         }
+    }
+
+    abrirAsignarResponsable(tarea: any) {
+        this.tareaParaResponsable.set(tarea);
+        this.dialogResponsable.set(true);
+    }
+
+    asignarResponsable(usuario: Usuario) {
+        const tarea = this.tareaParaResponsable();
+        if (!tarea) return;
+        const idProyecto = this.proyecto()!.id;
+        this.tareasService.asignarResponsable(idProyecto, tarea.id, usuario.id).subscribe({
+            next: () => {
+                this.dialogResponsable.set(false);
+                this.cargar(idProyecto);
+            },
+        });
+    }
+
+    quitarResponsable() {
+        const tarea = this.tareaParaResponsable();
+        if (!tarea) return;
+        const idProyecto = this.proyecto()!.id;
+        this.tareasService.quitarResponsable(idProyecto, tarea.id).subscribe({
+            next: () => {
+                this.dialogResponsable.set(false);
+                this.cargar(idProyecto);
+            },
+        });
+    }
+
+    iniciales(u: Usuario): string {
+        return ((u.nombre[0] ?? '') + (u.apellido?.[0] ?? '')).toUpperCase() || '?';
+    }
+
+    colorRespId(id: string): string {
+        return this.mapaColoresResp().get(id) ?? 'bg-slate-400';
+    }
+
+    exportarTareasCSV() {
+        const proyecto = this.proyecto();
+        if (!proyecto) return;
+        const encabezado = ['Descripción', 'Estado', 'Responsable', 'Fecha creación'];
+        const filas = this.tareasFiltradas().map(t => [
+            t.descripcion,
+            t.estado,
+            t.responsable
+                ? `${t.responsable.nombre} ${t.responsable.apellido ?? ''}`.trim()
+                : 'Sin asignar',
+            new Date(t.fechaCreacion).toLocaleDateString('es-AR'),
+        ]);
+        this.descargarCSV([encabezado, ...filas], `tareas-${proyecto.nombre}.csv`);
+    }
+
+    private descargarCSV(filas: string[][], nombre: string) {
+        const contenido = filas
+            .map(f => f.map(c => `"${(c ?? '').replace(/"/g, '""')}"`).join(','))
+            .join('\n');
+        const blob = new Blob(['﻿' + contenido], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nombre;
+        a.click();
+        URL.revokeObjectURL(url);
     }
 }

@@ -50,7 +50,11 @@
         </div>
         <div class="flex flex-col gap-1.5">
           <label for="cuil" class="text-sm font-medium text-slate-700 dark:text-slate-300">CUIL</label>
-          <input pInputText id="cuil" formControlName="cuil" placeholder="XX-XXXXXXXX-X" class="w-full" />
+          <p-inputmask id="cuil" formControlName="cuil" mask="99-999999-99"
+              placeholder="XX-XXXXXX-XX" styleClass="w-full" />
+          @if (form.get('cuil')?.invalid && form.get('cuil')?.touched) {
+            <small class="text-red-500">Formato inválido — debe ser XX-XXXXXX-XX (10 dígitos)</small>
+          }
         </div>
       </div>
 

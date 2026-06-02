@@ -3,13 +3,14 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputMaskModule } from 'primeng/inputmask';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { UsuariosService, CreateUsuarioPayload, UpdateUsuarioPayload } from '../core/services/usuarios.service';
 
 @Component({
   selector: 'app-form-usuario',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, SelectModule, RouterLink],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, InputMaskModule, PasswordModule, SelectModule, RouterLink],
   templateUrl: './form-usuario.html',
 })
 export class FormUsuarioComponent implements OnInit {
@@ -32,7 +33,7 @@ export class FormUsuarioComponent implements OnInit {
     nombre: ['', Validators.required],
     apellido: [''],
     email: ['', Validators.email],
-    cuil: [''],
+    cuil: ['', Validators.pattern(/^\d{2}-\d{6}-\d{2}$/)],
     clave: ['', Validators.minLength(6)],
     rol: ['OPERADOR', Validators.required],
   });
@@ -42,26 +43,28 @@ export class FormUsuarioComponent implements OnInit {
   }
 
   ngOnInit() {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (!idParam) return;
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('id');
+      if (!idParam) return;
 
-    this.id = +idParam;
-    this.loading.set(true);
-    this.form.get('clave')?.clearValidators();
-    this.form.get('clave')?.updateValueAndValidity();
+      this.id = +idParam;
+      this.loading.set(true);
+      this.form.get('clave')?.clearValidators();
+      this.form.get('clave')?.updateValueAndValidity();
 
-    this.usuariosService.obtenerPorId(this.id).subscribe({
-      next: usuario => {
-        this.form.patchValue({
-          nombre: usuario.nombre,
-          apellido: usuario.apellido ?? '',
-          email: usuario.email ?? '',
-          cuil: usuario.cuil ?? '',
-          rol: usuario.rol,
-        });
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
+      this.usuariosService.obtenerPorId(this.id).subscribe({
+        next: usuario => {
+          this.form.patchValue({
+            nombre: usuario.nombre,
+            apellido: usuario.apellido ?? '',
+            email: usuario.email ?? '',
+            cuil: usuario.cuil ?? '',
+            rol: usuario.rol,
+          });
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false),
+      });
     });
   }
 

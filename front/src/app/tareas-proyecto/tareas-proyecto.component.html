@@ -1,31 +1,182 @@
-<div class="flex flex-wrap p-4 gap-4">
-  <div *ngFor="let nombreP of getNombres()" class="w-full md:w-1/3 lg:w-1/4 bg-gray-50 p-4 rounded-lg shadow">
-    <h3 class="font-bold text-lg mb-4 text-blue-700">{{ nombreP }}</h3>
-    
-    <div class="flex gap-2 mb-4">
-      <input type="text" class="border p-2 rounded w-full" placeholder="+ Nueva" [(ngModel)]="nuevaTareaTexto[nombreP]">
-      <button class="bg-blue-600 text-white px-3 py-1 rounded" (click)="agregarTarea(nombreP)">+</button>
-    </div>
-
-    <div *ngFor="let t of columnas[nombreP]" class="bg-white p-3 mb-2 rounded shadow-sm border">
-      <div class="flex justify-between items-center w-full">
-        
-        <div *ngIf="tareaEditando !== t" class="flex-grow cursor-pointer" (click)="editarTarea(t)">
-          <span class="text-sm font-medium">{{ t.descripcion }}</span>
-        </div>
-
-        <div *ngIf="tareaEditando === t" class="flex gap-1 flex-grow">
-          <input [(ngModel)]="textoEdicion" class="border p-1 text-sm rounded w-full">
-          <button (click)="guardarEdicion(t)" class="text-green-600 font-bold px-2">✓</button>
-        </div>
-
-        <button class="text-red-500 font-bold ml-2" (click)="eliminarTarea(t.id)">×</button>
-      </div>
-
-      <select class="w-full mt-2 text-xs border rounded p-1" (change)="actualizarEstado(t, $event)">
-        <option [selected]="t.estado === 'PENDIENTE'" value="PENDIENTE">PENDIENTE</option>
-        <option [selected]="t.estado === 'FINALIZADA'" value="FINALIZADA">FINALIZADA</option>
-      </select>
-    </div>
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100">Tareas</h2>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestión de tareas por proyecto</p>
   </div>
 </div>
+
+
+<!-- Fila 1: búsqueda + dropdown proyecto -->
+<div class="flex flex-col sm:flex-row gap-3 mb-3">
+  <div class="relative flex-1">
+    <span class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></span>
+    <input
+      type="text"
+      placeholder="Buscar por descripción o proyecto..."
+      [value]="busqueda()"
+      (input)="busqueda.set($any($event.target).value)"
+      class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    />
+  </div>
+  <select
+    [value]="filtroProyecto()"
+    (change)="filtroProyecto.set($any($event.target).value)"
+    class="py-2 px-3 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-[180px]"
+  >
+    <option value="TODOS">Todos los proyectos</option>
+    @for (p of proyectosDisponibles(); track p) {
+      <option [value]="p">{{ p }}</option>
+    }
+  </select>
+</div>
+
+<!-- Fila 2: pills de estado -->
+<div class="flex items-center gap-2 mb-3">
+  <span class="text-xs text-slate-400 dark:text-slate-500 shrink-0">Estado</span>
+  <div class="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+    @for (opcion of estados; track opcion) {
+      <button
+        (click)="filtroEstado.set(opcion)"
+        class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-150"
+        [class]="filtroEstado() === opcion
+          ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm'
+          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'"
+      >{{ opcion }}</button>
+    }
+  </div>
+</div>
+
+<!-- Fila 3: pills de usuario (se muestra solo si hay usuarios o tareas sin asignar) -->
+@if (usuariosDisponibles().length > 0 || tieneTareasSinAsignar()) {
+  <div class="flex items-center gap-2 flex-wrap mb-4">
+    <span class="text-xs text-slate-400 dark:text-slate-500 shrink-0">Usuario</span>
+
+    <!-- Todos -->
+    <button
+      (click)="filtroUsuario.set('TODOS')"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150"
+      [class]="filtroUsuario() === 'TODOS'
+        ? 'bg-indigo-600 border-indigo-600 text-white'
+        : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-300 dark:hover:border-indigo-600'"
+    >
+      <span class="pi pi-users text-[10px]"></span>
+      Todos
+    </button>
+
+    @for (u of usuariosDisponibles(); track u.id) {
+      <button
+        (click)="filtroUsuario.set(u.id)"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150"
+        [class]="filtroUsuario() === u.id
+          ? 'bg-indigo-600 border-indigo-600 text-white'
+          : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-300 dark:hover:border-indigo-600'"
+      >
+        <span
+          class="w-4 h-4 rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0"
+          [ngClass]="u.color"
+        >{{ u.iniciales }}</span>
+        {{ u.nombreCompleto }}
+      </button>
+    }
+
+    @if (tieneTareasSinAsignar()) {
+      <button
+        (click)="filtroUsuario.set('SIN_ASIGNAR')"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150"
+        [class]="filtroUsuario() === 'SIN_ASIGNAR'
+          ? 'bg-indigo-600 border-indigo-600 text-white'
+          : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-300 dark:hover:border-indigo-600'"
+      >
+        <span class="w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center text-[9px] shrink-0">?</span>
+        Sin asignar
+      </button>
+    }
+  </div>
+}
+
+<!-- Contador + limpiar -->
+@if (hayFiltrosActivos()) {
+  <div class="flex items-center gap-3 mb-4">
+    <p class="text-xs text-slate-400 dark:text-slate-500">
+      {{ tareasFiltradas().length }} resultado{{ tareasFiltradas().length !== 1 ? 's' : '' }}
+    </p>
+    <button
+      (click)="limpiarFiltros()"
+      class="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-150"
+    >
+      <span class="pi pi-times-circle text-xs"></span>
+      Limpiar filtros
+    </button>
+  </div>
+}
+
+<!-- Estado vacío -->
+@if (getNombres().length === 0) {
+  <div class="rounded-xl border border-slate-200 dark:border-slate-700 py-12 text-center text-slate-400 dark:text-slate-500">
+    {{ hayFiltrosActivos() ? 'Sin resultados para los filtros aplicados' : 'No hay tareas registradas' }}
+  </div>
+} @else {
+  <div class="flex flex-wrap gap-4">
+    @for (nombreP of getNombres(); track nombreP) {
+      <div class="w-full md:w-[calc(33.333%-0.75rem)] lg:w-[calc(25%-0.75rem)] bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+
+        <h3 class="font-semibold text-base mb-4 text-indigo-600 dark:text-indigo-400">{{ nombreP }}</h3>
+
+        <div class="flex gap-2 mb-4">
+          <input
+            type="text"
+            class="border border-slate-200 dark:border-slate-600 p-2 rounded-lg w-full text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="+ Nueva tarea"
+            [(ngModel)]="nuevaTareaTexto[nombreP]"
+          />
+          <button
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors duration-150"
+            (click)="agregarTarea(nombreP)"
+          >+</button>
+        </div>
+
+        @for (t of columnasFiltradas()[nombreP]; track t.id) {
+          <div
+            class="bg-white dark:bg-slate-700 p-3 mb-2 rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-md transition-all duration-150 group"
+            (click)="irAProyecto(t.proyecto?.id)"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <span class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug flex-1">{{ t.descripcion }}</span>
+              <span class="pi pi-arrow-right text-[11px] text-slate-300 dark:text-slate-500 group-hover:text-indigo-400 shrink-0 mt-0.5 transition-colors"></span>
+            </div>
+
+            <div class="flex items-center gap-2 mt-2 flex-wrap">
+              <!-- Badge estado -->
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                [class]="t.estado === 'PENDIENTE'  ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                       : t.estado === 'FINALIZADA' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                       : 'bg-slate-100 text-slate-500 dark:bg-slate-600 dark:text-slate-400'">
+                {{ t.estado }}
+              </span>
+
+              <!-- Badge responsable (filtra al hacer click) -->
+              @if (t.responsable) {
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium cursor-pointer transition-all duration-150"
+                  [class]="filtroUsuario() === idStr(t.responsable.id)
+                    ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
+                    : 'bg-slate-100 dark:bg-slate-600 text-slate-500 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-300'"
+                  (click)="filtrarPorUsuario($event, idStr(t.responsable.id))"
+                >
+                  <span
+                    class="w-3 h-3 rounded-full text-white flex items-center justify-center text-[8px] font-bold shrink-0"
+                    [ngClass]="colorDeUsuario(idStr(t.responsable.id))"
+                  >{{ inicialesDeResponsable(t.responsable) }}</span>
+                  {{ t.responsable.nombre }} {{ t.responsable.apellido }}
+                </span>
+              } @else {
+                <span class="text-[11px] text-slate-400 dark:text-slate-500">Sin asignar</span>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+}
