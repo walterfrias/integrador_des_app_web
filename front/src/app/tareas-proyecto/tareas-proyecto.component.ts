@@ -156,9 +156,25 @@ export class TareasProyectoComponent implements OnInit {
     return String(id);
   }
 
+  readonly LIMITE_VISIBLE = 3;
+
+  tareasVisibles(nombreP: string): any[] {
+    return this.columnasFiltradas()[nombreP]?.slice(0, this.LIMITE_VISIBLE) ?? [];
+  }
+
+  tareasOcultas(nombreP: string): number {
+    const total = this.columnasFiltradas()[nombreP]?.length ?? 0;
+    return Math.max(0, total - this.LIMITE_VISIBLE);
+  }
+
   irAProyecto(idProyecto: number | undefined) {
     if (!idProyecto) return;
     this.router.navigate(['/app/proyectos', idProyecto]);
+  }
+
+  verMas(nombreP: string) {
+    const id = this.idProyectoPorNombre().get(nombreP);
+    this.irAProyecto(id);
   }
 
   agregarTarea(nombreProyecto: string) {

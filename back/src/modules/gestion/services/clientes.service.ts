@@ -24,7 +24,7 @@ export class ClientesService {
 
   async listar(estado?: EstadosClientesEnum): Promise<ListClienteDTO[]> {
     const where = estado ? { estado } : {};
-    return this.clienteRepository.find({ where, select: ['id', 'nombre', 'cuit', 'direccion', 'estado'] });
+    return this.clienteRepository.find({ where, select: ['id', 'nombre', 'cuit', 'direccion', 'estado'], order: { estado: 'ASC', nombre: 'ASC' } });
   }
 
   async obtenerPorId(id: number): Promise<any> {

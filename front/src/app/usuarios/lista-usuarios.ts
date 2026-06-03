@@ -5,18 +5,20 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { UsuariosService, Usuario } from '../core/services/usuarios.service';
 
 @Component({
   selector: 'app-lista-usuarios',
-  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule, TooltipModule],
-  providers: [ConfirmationService],
+  imports: [RouterLink, TableModule, TagModule, ButtonModule, ConfirmDialogModule, TooltipModule, ToastModule],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './lista-usuarios.html',
 })
 export class ListaUsuariosComponent implements OnInit {
   private usuariosService = inject(UsuariosService);
   private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
 
   usuarios = signal<Usuario[]>([]);
   loading = signal(true);
@@ -62,19 +64,27 @@ export class ListaUsuariosComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Dar de baja',
       rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-danger p-button-outlined',
+      rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
       accept: () => this.darDeBaja(usuario.id),
     });
   }
 
   private darDeBaja(id: number) {
     this.usuariosService.darDeBaja(id).subscribe({
-      next: () => this.cargarUsuarios(),
+      next: () => {
+        this.cargarUsuarios();
+        this.messageService.add({ severity: 'warn', summary: 'Baja registrada', detail: 'El usuario fue dado de baja.', life: 3000 });
+      },
     });
   }
 
   reactivar(id: number) {
     this.usuariosService.actualizar(id, { estado: 'ACTIVO' }).subscribe({
-      next: () => this.cargarUsuarios(),
+      next: () => {
+        this.cargarUsuarios();
+        this.messageService.add({ severity: 'success', summary: 'Usuario reactivado', detail: 'El usuario fue reactivado exitosamente.', life: 3000 });
+      },
     });
   }
 

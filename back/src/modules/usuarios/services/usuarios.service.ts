@@ -22,6 +22,7 @@ export class UsuariosService {
   async listar(): Promise<ListUsuarioDto[]> {
     return this.usuarioRepository.find({
       select: ['id', 'nombre', 'apellido', 'email', 'cuil', 'rol', 'estado'],
+      order: { estado: 'ASC', nombre: 'ASC' },
     });
   }
 

@@ -10,7 +10,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { ProyectosService, ProyectoDTO } from '../core/services/proyectos.service';
 import { TareasService } from '../core/services/tareas.service';
 import { UsuariosService, Usuario } from '../core/services/usuarios.service';
@@ -20,9 +21,9 @@ import { UsuariosService, Usuario } from '../core/services/usuarios.service';
     imports: [
         RouterLink, DatePipe, NgClass,
         TagModule, ButtonModule, DialogModule, TooltipModule, InputTextModule, SelectModule,
-        ReactiveFormsModule, ConfirmDialogModule,
+        ReactiveFormsModule, ConfirmDialogModule, ToastModule,
     ],
-    providers: [ConfirmationService],
+    providers: [ConfirmationService, MessageService],
     templateUrl: './detalle-proyecto.html',
 })
 export class DetalleProyectoComponent implements OnInit {
@@ -32,6 +33,7 @@ export class DetalleProyectoComponent implements OnInit {
     private usuariosService = inject(UsuariosService);
     private fb = inject(FormBuilder);
     private confirmationService = inject(ConfirmationService);
+    private messageService = inject(MessageService);
     private router = inject(Router);
 
     proyecto = signal<ProyectoDTO | null>(null);
@@ -151,11 +153,18 @@ export class DetalleProyectoComponent implements OnInit {
             ? this.tareasService.actualizarTarea(proyectoId, this.tareaEditando.id, { descripcion, estado })
             : this.tareasService.crearTarea(proyectoId, { descripcion: descripcion! });
 
+        const esNueva = !this.tareaEditando;
         request$.subscribe({
-            next: () => {
+            next: (tareaActualizada: any) => {
                 this.dialogTarea.set(false);
                 this.guardandoTarea.set(false);
-                this.cargar(proyectoId);
+                if (esNueva) {
+                    this.proyecto.update(p => p ? { ...p, tareas: [...p.tareas, tareaActualizada] } : p);
+                    this.messageService.add({ severity: 'success', summary: 'Tarea creada', detail: `"${tareaActualizada.descripcion}" fue agregada al proyecto.`, life: 3000 });
+                } else {
+                    this.proyecto.update(p => p ? { ...p, tareas: p.tareas.map(t => t.id === tareaActualizada.id ? tareaActualizada : t) } : p);
+                    this.messageService.add({ severity: 'success', summary: 'Tarea actualizada', detail: `"${tareaActualizada.descripcion}" fue actualizada.`, life: 3000 });
+                }
             },
             error: () => {
                 this.errorTarea.set('Error al guardar la tarea');
@@ -171,21 +180,50 @@ export class DetalleProyectoComponent implements OnInit {
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Eliminar',
             rejectLabel: 'Cancelar',
+            acceptButtonStyleClass: 'p-button-danger p-button-outlined',
+            rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
             accept: () => {
                 this.tareasService.eliminarTarea(this.proyecto()!.id, tarea.id).subscribe({
-                    next: () => this.cargar(this.proyecto()!.id),
-                    error: () => console.error('Error al eliminar tarea'),
+                    next: () => {
+                        this.proyecto.update(p => p ? { ...p, tareas: p.tareas.filter(t => t.id !== tarea.id) } : p);
+                        this.messageService.add({ severity: 'warn', summary: 'Tarea eliminada', detail: `"${tarea.descripcion}" fue eliminada.`, life: 3000 });
+                    },
+                    error: () => {
+                        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la tarea.', life: 4000 });
+                    },
                 });
             },
         });
     }
 
     cambiarEstado(tarea: any, nuevoEstado: string) {
+        if (nuevoEstado === 'BAJA') {
+            this.confirmationService.confirm({
+                message: `¿Dar de baja la tarea "${tarea.descripcion}"?`,
+                header: 'Confirmar baja',
+                icon: 'pi pi-exclamation-triangle',
+                acceptLabel: 'Dar de baja',
+                rejectLabel: 'Cancelar',
+                acceptButtonStyleClass: 'p-button-danger p-button-outlined',
+                rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+                accept: () => this.ejecutarCambioEstado(tarea, nuevoEstado),
+            });
+            return;
+        }
+        this.ejecutarCambioEstado(tarea, nuevoEstado);
+    }
+
+    private ejecutarCambioEstado(tarea: any, nuevoEstado: string) {
         this.tareasService.actualizarTarea(this.proyecto()!.id, tarea.id, {
             descripcion: tarea.descripcion,
             estado: nuevoEstado,
         }).subscribe({
-            next: () => this.cargar(this.proyecto()!.id),
+            next: (tareaActualizada: any) => {
+                this.proyecto.update(p => p ? { ...p, tareas: p.tareas.map(t => t.id === tareaActualizada.id ? tareaActualizada : t) } : p);
+                if (nuevoEstado === 'BAJA') {
+                    this.messageService.add({ severity: 'warn', summary: 'Tarea dada de baja', detail: `"${tarea.descripcion}" fue dada de baja.`, life: 3000 });
+                }
+            },
             error: () => console.error('Error al cambiar estado'),
         });
     }
@@ -210,9 +248,9 @@ export class DetalleProyectoComponent implements OnInit {
         if (!tarea) return;
         const idProyecto = this.proyecto()!.id;
         this.tareasService.asignarResponsable(idProyecto, tarea.id, usuario.id).subscribe({
-            next: () => {
+            next: (tareaActualizada: any) => {
                 this.dialogResponsable.set(false);
-                this.cargar(idProyecto);
+                this.proyecto.update(p => p ? { ...p, tareas: p.tareas.map(t => t.id === tareaActualizada.id ? tareaActualizada : t) } : p);
             },
         });
     }
@@ -222,9 +260,9 @@ export class DetalleProyectoComponent implements OnInit {
         if (!tarea) return;
         const idProyecto = this.proyecto()!.id;
         this.tareasService.quitarResponsable(idProyecto, tarea.id).subscribe({
-            next: () => {
+            next: (tareaActualizada: any) => {
                 this.dialogResponsable.set(false);
-                this.cargar(idProyecto);
+                this.proyecto.update(p => p ? { ...p, tareas: p.tareas.map(t => t.id === tareaActualizada.id ? tareaActualizada : t) } : p);
             },
         });
     }
