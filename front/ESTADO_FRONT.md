@@ -44,13 +44,15 @@
   - Crear y editar en el mismo componente
   - Contraseña opcional al editar
 
+
+## ✅ COMPLETADO (Azu)
+
+### Clientes + Contactos
+- **CN06 — Lista de Clientes** ✅ (RF06, RF09, RF18)
+- **CN07 — Formulario de Cliente** ✅ (RF07, RF08, RF23, RF24, RF25)
 ---
 
 ## ❌ PENDIENTE (según división de tareas)
-
-### Integrante 2 — Clientes + Contactos
-- **CN06 — Lista de Clientes** (RF06, RF09, RF18)
-- **CN07 — Formulario de Cliente** (RF07, RF08, RF23, RF24, RF25)
 
 ### Integrante 3 — Proyectos
 - **CN03 — Lista de Proyectos** (RF02, RF17, RF22, RF26)

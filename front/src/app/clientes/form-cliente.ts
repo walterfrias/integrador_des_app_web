@@ -41,7 +41,6 @@ export class FormClienteComponent implements OnInit {
   guardando = signal(false);
   errorMessage = signal('');
 
-  // Contactos
   contactos = signal<Contacto[]>([]);
   dialogContacto = signal(false);
   contactoEditando = signal<Contacto | null>(null);
@@ -76,9 +75,16 @@ export class FormClienteComponent implements OnInit {
 
   private actualizarValidadoresTipo(tipo: string) {
     const ctrl = this.formContacto.get('valor')!;
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    const telRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
     ctrl.setValidators(tipo === 'EMAIL'
-      ? [Validators.required, Validators.email]
-      : [Validators.required]);
+      ? [Validators.required, Validators.pattern(emailRegex)]
+      : [Validators.required, Validators.pattern(telRegex)]
+    );
+    
     ctrl.updateValueAndValidity();
   }
 
@@ -141,8 +147,6 @@ export class FormClienteComponent implements OnInit {
       });
     }
   }
-
-  // ── Contactos ─────────────────────────────────────────────────────────────
 
   abrirNuevoContacto() {
     this.contactoEditando.set(null);
