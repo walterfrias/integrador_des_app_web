@@ -6,22 +6,24 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { ProyectosService, ListProyectoDTO } from '../core/services/proyectos.service';
 
 @Component({
     selector: 'app-lista-proyectos',
     imports: [
         RouterLink, DatePipe,
-        TableModule, TagModule, ButtonModule, TooltipModule, ConfirmDialogModule,
+        TableModule, TagModule, ButtonModule, TooltipModule, ConfirmDialogModule, ToastModule,
     ],
-    providers: [ConfirmationService],
+    providers: [ConfirmationService, MessageService],
     templateUrl: './lista-proyectos.html',
 })
 
 export class ListaProyectosComponent implements OnInit {
     private proyectosService = inject(ProyectosService);
     private confirmationService = inject(ConfirmationService);
+    private messageService = inject(MessageService);
     proyectos = signal<ListProyectoDTO[]>([]);
     loading = signal(true);
     filtroEstado = signal<string>('TODOS');
@@ -58,13 +60,20 @@ export class ListaProyectosComponent implements OnInit {
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Dar de baja',
             rejectLabel: 'Cancelar',
-            accept: () => this.actualizarEstado(proyecto.id, 'BAJA'),
+            acceptButtonStyleClass: 'p-button-danger p-button-outlined',
+            rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+            accept: () => this.actualizarEstado(proyecto.id, 'BAJA', 'warn', 'Baja registrada', `"${proyecto.nombre}" fue dado de baja.`),
         });
     }
-    finalizar(proyecto: ListProyectoDTO) { this.actualizarEstado(proyecto.id, 'FINALIZADO'); }
-    reactivar(proyecto: ListProyectoDTO) { this.actualizarEstado(proyecto.id, 'ACTIVO'); }
-    private actualizarEstado(id: number, estado: 'ACTIVO' | 'FINALIZADO' | 'BAJA') {
-        this.proyectosService.actualizar(id, { estado }).subscribe({ next: () => this.cargarProyectos() });
+    finalizar(proyecto: ListProyectoDTO) { this.actualizarEstado(proyecto.id, 'FINALIZADO', 'info', 'Proyecto finalizado', `"${proyecto.nombre}" fue marcado como finalizado.`); }
+    reactivar(proyecto: ListProyectoDTO) { this.actualizarEstado(proyecto.id, 'ACTIVO', 'success', 'Proyecto reactivado', `"${proyecto.nombre}" fue reactivado exitosamente.`); }
+    private actualizarEstado(id: number, estado: 'ACTIVO' | 'FINALIZADO' | 'BAJA', severity: string, summary: string, detail: string) {
+        this.proyectosService.actualizar(id, { estado }).subscribe({
+            next: () => {
+                this.cargarProyectos();
+                this.messageService.add({ severity, summary, detail, life: 3000 } as any);
+            },
+        });
     }
     severidadEstado(estado: string): 'success' | 'info' | 'danger' | 'warn' {
         switch (estado) {

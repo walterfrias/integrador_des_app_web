@@ -36,6 +36,10 @@ export class MainLayoutComponent {
     { label: 'Tareas', icon: 'pi pi-check-square', route: '/app/mis-tareas', adminOnly: false }
   ];
 
+  get navItemsVisibles(): NavItem[] {
+    return this.navItems.filter(item => !item.adminOnly || this.usuario?.rol === 'ADMIN');
+  }
+
   toggleSidebar() {
     this.sidebarCollapsed.update(v => !v);
   }
