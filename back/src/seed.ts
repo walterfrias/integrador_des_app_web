@@ -332,7 +332,8 @@ async function seed() {
   for (const datos of USUARIOS) {
     const existePorEmail  = await usuarioRepo.findOneBy({ email: datos.email });
     const existePorNombre = await usuarioRepo.findOneBy({ nombre: datos.nombre });
-    if (existePorEmail || existePorNombre) {
+    const existePorCuil   = datos.cuil ? await usuarioRepo.findOneBy({ cuil: datos.cuil }) : null;
+    if (existePorEmail || existePorNombre || existePorCuil) {
       console.log(`Usuario "${datos.email}" ya existe, se omite.`);
       continue;
     }
