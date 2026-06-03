@@ -29,8 +29,14 @@ export class ProyectosService {
         const proyectos = await this.proyectoRepository.find({
             where,
             relations: { cliente: true },
-            order: { id: 'ASC' },
         });
+        const ordenProyecto = (p: Proyecto) => {
+            if (this.calcularRetraso(p)) return 0;
+            if (p.estado === EstadoProyecto.ACTIVO) return 1;
+            if (p.estado === EstadoProyecto.FINALIZADO) return 2;
+            return 3;
+        };
+        proyectos.sort((a, b) => ordenProyecto(a) - ordenProyecto(b));
         return proyectos.map((p) => ({
             id: p.id,
             nombre: p.nombre,

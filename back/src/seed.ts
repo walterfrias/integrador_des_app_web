@@ -343,8 +343,9 @@ async function seed() {
 
   // Clientes
   for (const datos of CLIENTES) {
-    const existe = await clienteRepo.findOneBy({ nombre: datos.nombre });
-    if (existe) {
+    const existePorNombre = await clienteRepo.findOneBy({ nombre: datos.nombre });
+    const existePorCuit   = datos.cuit ? await clienteRepo.findOneBy({ cuit: datos.cuit }) : null;
+    if (existePorNombre || existePorCuit) {
       console.log(`Cliente "${datos.nombre}" ya existe, se omite.`);
       continue;
     }
