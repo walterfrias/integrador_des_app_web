@@ -56,8 +56,50 @@
         </div>
     </div>
 
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-5">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Equipo del Proyecto</h3>
+                <p class="text-sm text-slate-500 mt-1">Usuarios asignados para trabajar en tareas</p>
+            </div>
+            <button pButton icon="pi pi-user-plus" label="Asignar miembro" size="small" (click)="abrirDialogAsignar()"></button>
+        </div>
 
-    <!-- Kanban de tareas (RF21) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            @for (asig of asignaciones(); track asig.id) {
+                <div class="flex items-center gap-3 p-3 border rounded-xl transition-all" 
+                     [ngClass]="asig.estado === 'BAJA' ? 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 opacity-60' : 'border-indigo-100 dark:border-indigo-900/30 bg-white dark:bg-slate-800'">
+                    
+                    <span class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
+                          [ngClass]="asig.estado === 'BAJA' ? 'bg-slate-200 text-slate-500' : 'bg-indigo-100 text-indigo-700'">
+                        {{ asig.usuarioNombre[0] | uppercase }}
+                    </span>
+                    
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-800 dark:text-slate-100 truncate" [class.line-through]="asig.estado === 'BAJA'">
+                            {{ asig.usuarioNombre }}
+                        </p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wide mt-0.5">Alta: {{ asig.fechaAsignacion | date:'dd/MM/yy' }}</p>
+                    </div>
+
+                    @if (asig.estado === 'ACTIVO') {
+                        <button pButton icon="pi pi-times" severity="danger" text rounded size="small" 
+                                pTooltip="Dar de baja del proyecto" tooltipPosition="top"
+                                (click)="confirmarBajaAsignacion(asig)"></button>
+                    } @else {
+                        <p-tag severity="danger" value="BAJA" styleClass="text-[9px] px-1.5"></p-tag>
+                    }
+                </div>
+            }
+            
+            @if (asignaciones().length === 0) {
+                <div class="col-span-full text-center py-6 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-slate-500 text-sm">
+                    Aún no hay usuarios asignados a este proyecto.
+                </div>
+            }
+        </div>
+    </div>
+
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -74,7 +116,6 @@
             </div>
         </div>
 
-        <!-- Filtro por estado (RF19) -->
         <div class="flex items-center gap-2 flex-wrap mb-3">
             <span class="text-xs text-slate-400 dark:text-slate-500 shrink-0">Estado</span>
             <div class="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
@@ -90,7 +131,6 @@
             </div>
         </div>
 
-        <!-- Filtro por responsable (RF33) -->
         @if (responsablesEnProyecto().length > 0 || tieneTareasSinResponsable()) {
             <div class="flex items-center gap-2 flex-wrap mb-5">
                 <span class="text-xs text-slate-400 dark:text-slate-500 shrink-0">Responsable</span>
@@ -146,7 +186,6 @@
         <div class="grid grid-cols-1 gap-4"
             [class]="filtroEstado() === 'TODOS' ? 'md:grid-cols-3' : 'md:grid-cols-1 max-w-lg'">
 
-            <!-- PENDIENTE -->
             @if (filtroEstado() === 'TODOS' || filtroEstado() === 'PENDIENTE') {
             <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/40 rounded-xl p-4">
                 <div class="flex items-center gap-2 mb-4">
@@ -204,7 +243,6 @@
             </div>
             }
 
-            <!-- FINALIZADA -->
             @if (filtroEstado() === 'TODOS' || filtroEstado() === 'FINALIZADA') {
             <div class="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-800/40 rounded-xl p-4">
                 <div class="flex items-center gap-2 mb-4">
@@ -258,7 +296,6 @@
             </div>
             }
 
-            <!-- BAJA -->
             @if (filtroEstado() === 'TODOS' || filtroEstado() === 'BAJA') {
             <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
                 <div class="flex items-center gap-2 mb-4">
@@ -336,7 +373,6 @@
 
 <p-confirmDialog />
 
-<!-- Dialog asignar responsable (RF31 / RF32) -->
 <p-dialog
     [header]="tareaParaResponsable()?.responsable ? 'Cambiar responsable' : 'Asignar responsable'"
     [(visible)]="dialogResponsable"
@@ -381,3 +417,32 @@
         </div>
     }
 </p-dialog>
+
+<p-dialog header="Asignar usuario al proyecto" [(visible)]="dialogAsignar" [modal]="true" [draggable]="false" styleClass="w-full max-w-sm">
+    <p class="text-sm text-slate-500 mb-4">Seleccioná un usuario activo para sumarlo al equipo.</p>
+    
+    <div class="flex flex-col gap-2">
+        @for (u of usuariosAsignables(); track u.id) {
+            <button class="flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700 text-left transition-colors" 
+                    (click)="asignarUsuario(u.id)">
+                 <div class="flex items-center gap-3">
+                     <span class="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                         {{ iniciales(u) }}
+                     </span>
+                     <div>
+                         <p class="text-sm font-medium text-slate-800 dark:text-slate-100">{{ u.nombre }} {{ u.apellido }}</p>
+                         <p class="text-xs text-slate-500">{{ u.rol }}</p>
+                     </div>
+                 </div>
+                 <span class="pi pi-plus text-indigo-600 text-sm"></span>
+            </button>
+        }
+        
+        @if (usuariosAsignables().length === 0) {
+            <div class="text-center py-6 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <span class="pi pi-check-circle text-2xl text-emerald-500 mb-2"></span>
+                <p class="text-sm text-slate-600 dark:text-slate-300 font-medium">¡Equipo completo!</p>
+                <p class="text-xs text-slate-500 mt-1">Todos los usuarios activos ya pertenecen a este proyecto.</p>
+            </div>
+        }
+    </div>
