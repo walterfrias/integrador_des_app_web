@@ -1,15 +1,97 @@
 services:
+
   db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-cooperadora}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: daw_docker_db
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@uner.edu.ar
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  certgen:
+    image: alpine
+    command: >
+      sh -c "apk add --no-cache openssl &&
+        if [ ! -f /certs/server.crt ]; then
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048
+            -keyout /certs/server.key
+            -out /certs/server.crt
+            -subj '/C=AR/ST=EntreRios/L=Parana/O=UNER/CN=localhost';
+        fi"
+    volumes:
+      - certs:/certs
+
+  back:
+    build:
+      context: ./back
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: daw_docker_db
+      DB_SSL: false
+      JWT_SECRET: daw_uner_2026_secret
+      JWT_EXPIRES_IN: 8h
+      SWAGGER_HABILITADO: false
+    command: sh -c "npm run migration:run:prod && npm run seed:prod && node dist/main"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  front:
+    build:
+      context: ./front
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      BACKEND_URL: http://back:3000
+    volumes:
+      - certs:/etc/nginx/ssl
+    depends_on:
+      certgen:
+        condition: service_completed_successfully
+      back:
+        condition: service_started
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   pg_data:
+  certs:
