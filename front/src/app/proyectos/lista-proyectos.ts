@@ -18,6 +18,13 @@ import { ProyectosService, ListProyectoDTO } from '../core/services/proyectos.se
     ],
     providers: [ConfirmationService, MessageService],
     templateUrl: './lista-proyectos.html',
+    styles: [`
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+            50% { box-shadow: 0 0 8px 3px rgba(34,197,94,0.45); }
+        }
+        .badge-prioritario { animation: glow-pulse 1.8s ease-in-out infinite; }
+    `],
 })
 
 export class ListaProyectosComponent implements OnInit {
@@ -82,6 +89,13 @@ export class ListaProyectosComponent implements OnInit {
             case 'BAJA': return 'danger';
             default: return 'warn';
         }
+    }
+
+    esPrioridad(proyecto: ListProyectoDTO, idx: number): boolean {
+        if (idx >= 3 || !proyecto.fechaLimite) return false;
+        const hoy = new Date();
+        const fecha = new Date(proyecto.fechaLimite);
+        return fecha.getFullYear() === hoy.getFullYear() && fecha.getMonth() === hoy.getMonth();
     }
 
     exportarCSV() {

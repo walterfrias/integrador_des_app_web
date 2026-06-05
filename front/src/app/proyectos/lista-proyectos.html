@@ -20,7 +20,6 @@
     </div>
 </div>
 
-<!-- Búsqueda + filtro estado -->
 <div class="flex flex-col sm:flex-row gap-3 mb-4">
     <div class="relative flex-1">
         <span class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></span>
@@ -57,16 +56,38 @@
         styleClass="p-datatable-sm">
         <ng-template #header>
             <tr>
-                <th class="text-slate-600 dark:text-slate-300">Nombre</th>
-                <th class="text-slate-600 dark:text-slate-300">Cliente</th>
-                <th class="text-slate-600 dark:text-slate-300">Fecha límite</th>
-                <th class="text-slate-600 dark:text-slate-300">Retraso</th>
-                <th class="text-slate-600 dark:text-slate-300">Estado</th>
-                <th class="text-slate-600 dark:text-slate-300" style="text-align: right">Acciones</th>
+                <th pSortableColumn="nombre" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-1.5">
+                        Nombre <p-sortIcon field="nombre" />
+                    </div>
+                </th>
+                <th pSortableColumn="cliente.nombre" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-1.5">
+                        Cliente <p-sortIcon field="cliente.nombre" />
+                    </div>
+                </th>
+                <th pSortableColumn="fechaLimite" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-1.5">
+                        Fecha límite <p-sortIcon field="fechaLimite" />
+                    </div>
+                </th>
+                <th pSortableColumn="retraso" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-1.5">
+                        Retraso <p-sortIcon field="retraso" />
+                    </div>
+                </th>
+                <th pSortableColumn="estado" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-1.5">
+                        Estado <p-sortIcon field="estado" />
+                    </div>
+                </th>
+                <th class="text-slate-600 dark:text-slate-300" style="text-align: right">
+                    Acciones
+                </th>
             </tr>
         </ng-template>
 
-        <ng-template #body let-proyecto>
+        <ng-template #body let-proyecto let-rowIndex="rowIndex">
             <tr class="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                 [routerLink]="['/app/proyectos', proyecto.id]">
                 <td class="font-medium text-slate-800 dark:text-slate-100">{{ proyecto.nombre }}</td>
@@ -86,7 +107,8 @@
                     @if (proyecto.retraso) { <p-tag value="Atrasado" severity="danger" /> }
                 </td>
                 <td>
-                    <p-tag [value]="proyecto.estado" [severity]="severidadEstado(proyecto.estado)" />
+                    <p-tag [value]="proyecto.estado" [severity]="severidadEstado(proyecto.estado)"
+                        [styleClass]="esPrioridad(proyecto, rowIndex) && proyecto.estado === 'ACTIVO' ? 'badge-prioritario' : ''" />
                 </td>
                 <td class="text-right" (click)="$event.stopPropagation()">
                     <div class="flex items-center justify-end gap-2">

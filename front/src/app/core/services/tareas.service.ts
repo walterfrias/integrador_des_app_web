@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TareasService {
-  private base = 'api/v1/proyectos';
+  private base = '/api/v1/proyectos';
 
   constructor(private http: HttpClient) {}
 
