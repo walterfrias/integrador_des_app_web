@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, UpperCasePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { TagModule } from 'primeng/tag';
@@ -15,11 +15,12 @@ import { ToastModule } from 'primeng/toast';
 import { ProyectosService, ProyectoDTO } from '../core/services/proyectos.service';
 import { TareasService } from '../core/services/tareas.service';
 import { UsuariosService, Usuario } from '../core/services/usuarios.service';
+import { AsignacionesService, Asignacion } from '../core/services/asignaciones.service';
 
 @Component({
     selector: 'app-detalle-proyecto',
     imports: [
-        RouterLink, DatePipe, NgClass,
+        RouterLink, DatePipe, UpperCasePipe, UpperCasePipe, NgClass,
         TagModule, ButtonModule, DialogModule, TooltipModule, InputTextModule, SelectModule,
         ReactiveFormsModule, ConfirmDialogModule, ToastModule,
     ],
@@ -35,6 +36,7 @@ export class DetalleProyectoComponent implements OnInit {
     private confirmationService = inject(ConfirmationService);
     private messageService = inject(MessageService);
     private router = inject(Router);
+    private asignacionesService = inject(AsignacionesService);
 
     proyecto = signal<ProyectoDTO | null>(null);
     loading = signal(true);
@@ -43,6 +45,17 @@ export class DetalleProyectoComponent implements OnInit {
     dialogResponsable = signal(false);
     tareaParaResponsable = signal<any>(null);
 
+    // SEÑALES PARA ASIGNACIONES
+    asignaciones = signal<Asignacion[]>([]);
+    dialogAsignar = signal(false);
+
+    // PROPIEDAD COMPUTADA ASIGNACIONES
+    usuariosAsignables = computed(() => {
+        const activosEnProyecto = this.asignaciones()
+            .filter(a => a.estado === 'ACTIVO')
+            .map(a => a.usuarioId);
+        return this.usuariosActivos().filter(u => !activosEnProyecto.includes(u.id));
+    });
 
     dialogTarea = signal(false);
     tareaEditando: any = null;
@@ -125,6 +138,15 @@ export class DetalleProyectoComponent implements OnInit {
         this.proyectosService.obtenerPorId(id).subscribe({
             next: (data) => { this.proyecto.set(data); this.loading.set(false); },
             error: () => { this.loading.set(false); this.router.navigate(['/app/proyectos']); },
+        });
+        
+        // CARGAR ASIGNACIONES
+        this.cargarAsignaciones(id);
+    }
+
+    private cargarAsignaciones(id: number) {
+        this.asignacionesService.listarPorProyecto(id).subscribe({
+            next: (data) => this.asignaciones.set(data)
         });
     }
 
@@ -294,12 +316,49 @@ export class DetalleProyectoComponent implements OnInit {
         const contenido = filas
             .map(f => f.map(c => `"${(c ?? '').replace(/"/g, '""')}"`).join(','))
             .join('\n');
-        const blob = new Blob(['﻿' + contenido], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob(['\uFEFF' + contenido], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = nombre;
         a.click();
         URL.revokeObjectURL(url);
+    }
+
+    abrirDialogAsignar() {
+        this.dialogAsignar.set(true);
+    }
+
+    asignarUsuario(usuarioId: number) {
+        const proyectoId = this.proyecto()!.id;
+        const previa = this.asignaciones().find(a => a.usuarioId === usuarioId);
+
+        // Creamos una función cortita para reutilizar la lógica de éxito
+        const onSuccess = () => {
+            this.dialogAsignar.set(false);
+            this.cargarAsignaciones(proyectoId);
+        };
+
+        // Separamos el llamado dependiendo de si reactivamos o creamos uno nuevo
+        if (previa && previa.estado === 'BAJA') {
+            this.asignacionesService.reactivar(previa.id).subscribe({ next: onSuccess });
+        } else {
+            this.asignacionesService.asignar(usuarioId, proyectoId).subscribe({ next: onSuccess });
+        }
+    }
+
+    confirmarBajaAsignacion(asig: Asignacion) {
+        this.confirmationService.confirm({
+            message: `¿Dar de baja a ${asig.usuarioNombre} de este proyecto?`,
+            header: 'Confirmar baja',
+            icon: 'pi pi-info-circle',
+            acceptLabel: 'Dar de baja',
+            rejectLabel: 'Cancelar',
+            accept: () => {
+                this.asignacionesService.darDeBaja(asig.id).subscribe({
+                    next: () => this.cargarAsignaciones(this.proyecto()!.id)
+                });
+            }
+        });
     }
 }
