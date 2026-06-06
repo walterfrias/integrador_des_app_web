@@ -93,7 +93,7 @@ Limita ciertas funcionalidades a usuarios con rol Admin: gestión de usuarios, b
 | RF13 | Listar usuarios (solo Admin). | ✅ |
 | RF14 | Crear usuario con nombre, clave, rol y estado (solo Admin). | ✅ |
 | RF15 | Modificar usuario existente (solo Admin). | ✅ |
-| RF16 | Dar de baja usuario. No puede darse de baja a sí mismo (solo Admin). | ✅ |
+| RF16 | Dar de baja usuario. No puede darse de baja a sí mismo (solo Admin). |     ✅ |
 
 **Restricciones adicionales:**
 

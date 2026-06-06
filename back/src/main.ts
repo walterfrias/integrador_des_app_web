@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -14,6 +14,14 @@ async function bootstrap() {
   });
 
   app.use(helmet());
+
+  app.use((req, res, next) => {
+    const logger = new Logger('HTTP');
+    res.on('finish', () => {
+      logger.log(`${req.method} ${req.url} ${res.statusCode}`);
+    });
+    next();
+  });
 
   const globalPrefix = 'api';
 
