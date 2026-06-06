@@ -15,7 +15,7 @@ module.exports = {
         DB_PASSWORD: 'postgres',
         DB_NAME: 'daw_db',
         DB_SSL: 'false',
-        JWT_SECRET: 'cambia_este_secreto_en_produccion',
+        JWT_SECRET: '14f25ae7a618fd009d16dfbbc7cf6a0b9c8e1c',
         JWT_EXPIRES_IN: '8h',
         SWAGGER_HABILITADO: 'false',
       },

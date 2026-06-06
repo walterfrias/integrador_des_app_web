@@ -5,14 +5,6 @@
 
 ---
 
-## Importar en draw.io
-
-1. Abrir draw.io → `Extras > Edit Diagram`
-2. En el desplegable superior seleccionar **Mermaid**
-3. Borrar el contenido existente y pegar el bloque de código de abajo
-4. Click en **OK**
-
----
 
 ```mermaid
 classDiagram
