@@ -11,7 +11,7 @@
   </div>
 
   <!-- Cards de módulos -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div [class]="gridModulos">
     @for (modulo of modulosVisibles; track modulo.route) {
       <a
         [routerLink]="modulo.route"

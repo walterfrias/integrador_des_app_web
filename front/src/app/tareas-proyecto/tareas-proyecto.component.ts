@@ -2,17 +2,21 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { TareasService } from '../core/services/tareas.service';
 
 @Component({
   selector: 'app-tareas-proyecto',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './tareas-proyecto.component.html',
 })
 export class TareasProyectoComponent implements OnInit {
   private tareasService = inject(TareasService);
   private router = inject(Router);
+  private messageService = inject(MessageService);
 
   todasLasTareas = signal<any[]>([]);
   busqueda = signal('');
@@ -186,6 +190,7 @@ export class TareasProyectoComponent implements OnInit {
       next: () => {
         this.nuevaTareaTexto[nombreProyecto] = '';
         this.cargar();
+        this.messageService.add({ severity: 'success', summary: 'Tarea creada', detail: `Tarea agregada al proyecto "${nombreProyecto}".`, life: 3000 });
       },
       error: (err) => console.error('Error al crear la tarea:', err),
     });

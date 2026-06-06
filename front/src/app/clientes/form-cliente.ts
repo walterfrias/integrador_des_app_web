@@ -10,7 +10,8 @@ import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import {
   ClientesService,
   Contacto,
@@ -24,9 +25,9 @@ import {
   imports: [
     ReactiveFormsModule, FormsModule, RouterLink,
     ButtonModule, InputTextModule, InputMaskModule, SelectModule, DialogModule,
-    TagModule, TooltipModule, ConfirmDialogModule,
+    TagModule, TooltipModule, ConfirmDialogModule, ToastModule,
   ],
-  providers: [ConfirmationService],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './form-cliente.html',
 })
 export class FormClienteComponent implements OnInit {
@@ -35,6 +36,7 @@ export class FormClienteComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private clientesService = inject(ClientesService);
   private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
 
   id: number | null = null;
   loading = signal(false);
@@ -122,7 +124,10 @@ export class FormClienteComponent implements OnInit {
       if (cuit) data.cuit = cuit;
       if (direccion) data.direccion = direccion;
       this.clientesService.actualizar(this.id!, data).subscribe({
-        next: () => this.router.navigate(['/app/clientes']),
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Cliente actualizado', detail: `"${nombre}" fue guardado correctamente.`, life: 2000 });
+          setTimeout(() => this.router.navigate(['/app/clientes']), 1500);
+        },
         error: () => {
           this.errorMessage.set('Error al actualizar el cliente');
           this.guardando.set(false);
@@ -133,7 +138,10 @@ export class FormClienteComponent implements OnInit {
       if (cuit) data.cuit = cuit;
       if (direccion) data.direccion = direccion;
       this.clientesService.crear(data).subscribe({
-        next: () => this.router.navigate(['/app/clientes']),
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Cliente creado', detail: `"${nombre}" fue creado exitosamente.`, life: 2000 });
+          setTimeout(() => this.router.navigate(['/app/clientes']), 1500);
+        },
         error: () => {
           this.errorMessage.set('Error al crear el cliente. Verificá que el nombre o CUIT no estén en uso.');
           this.guardando.set(false);

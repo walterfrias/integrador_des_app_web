@@ -1,53 +1,146 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
-  <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-md p-8">
+<div class="fixed inset-0 flex">
 
-    <h1 class="text-2xl font-semibold text-gray-800 dark:text-slate-100 mb-6 text-center">Iniciar sesión</h1>
+  <!-- Panel izquierdo — branding -->
+  <div class="hidden lg:flex lg:w-1/2 bg-slate-900 flex-col justify-between p-12">
 
-    @if (errorMessage) {
-      <p-message severity="error" [text]="errorMessage" styleClass="w-full mb-4" />
-    }
-
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-
-      <div class="flex flex-col gap-1">
-        <label for="email" class="text-sm font-medium text-gray-700 dark:text-slate-300">Email</label>
-        <input
-          pInputText
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="tu@email.com"
-          class="w-full"
-        />
-        @if (form.get('email')?.invalid && form.get('email')?.touched) {
-          <small class="text-red-500">Ingresá un email válido</small>
-        }
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-sm">
+        <span class="pi pi-briefcase text-white text-base"></span>
       </div>
+      <span class="text-white font-semibold text-lg tracking-tight">
+        Daw<span class="text-indigo-400">App</span>
+      </span>
+    </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="clave" class="text-sm font-medium text-gray-700 dark:text-slate-300">Contraseña</label>
-        <p-password
-          inputId="clave"
-          formControlName="clave"
-          placeholder="••••••••"
-          [feedback]="false"
-          [toggleMask]="true"
-          styleClass="w-full"
-          inputStyleClass="w-full"
-        />
-        @if (form.get('clave')?.invalid && form.get('clave')?.touched) {
-          <small class="text-red-500">La contraseña es requerida</small>
-        }
-      </div>
+    <div>
+      <h2 class="text-4xl font-bold text-white leading-tight mb-4">
+        Gestión de proyectos,
+        <span class="text-indigo-400">simple y eficiente</span>
+      </h2>
+      <p class="text-slate-400 text-lg mb-10">
+        Organizá proyectos, tareas y clientes desde un solo lugar. Sin complejidad innecesaria.
+      </p>
 
-      <p-button
-        type="submit"
-        label="Ingresar"
-        styleClass="w-full mt-2"
-        [loading]="loading"
-        [disabled]="form.invalid"
-      />
+      <ul class="space-y-4">
+        <li class="flex items-center gap-3 text-slate-300">
+          <div class="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
+            <span class="pi pi-folder-open text-indigo-400 text-sm"></span>
+          </div>
+          <span class="text-sm">Proyectos con estado y cliente asignado</span>
+        </li>
+        <li class="flex items-center gap-3 text-slate-300">
+          <div class="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
+            <span class="pi pi-check-square text-indigo-400 text-sm"></span>
+          </div>
+          <span class="text-sm">Tareas por proyecto: agregar, modificar y eliminar</span>
+        </li>
+        <li class="flex items-center gap-3 text-slate-300">
+          <div class="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
+            <span class="pi pi-building text-indigo-400 text-sm"></span>
+          </div>
+          <span class="text-sm">Clientes activos vinculados a cada proyecto</span>
+        </li>
+        <li class="flex items-center gap-3 text-slate-300">
+          <div class="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
+            <span class="pi pi-users text-indigo-400 text-sm"></span>
+          </div>
+          <span class="text-sm">Acceso por rol: administrador y operador</span>
+        </li>
+      </ul>
+    </div>
 
-    </form>
+    <p class="text-slate-600 text-sm">© 2026 DWA</p>
   </div>
+
+  <!-- Panel derecho — formulario -->
+  <div class="w-full lg:w-1/2 bg-white dark:bg-slate-950 flex items-center justify-center p-8">
+    <div class="w-full max-w-md">
+
+      <!-- Logo mobile -->
+      <div class="flex items-center gap-2 mb-8 lg:hidden">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-sm">
+          <span class="pi pi-briefcase text-white text-sm"></span>
+        </div>
+        <span class="font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
+          Proyecta<span class="text-indigo-500">App</span>
+        </span>
+      </div>
+
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Iniciar sesión</h1>
+      <p class="text-slate-500 dark:text-slate-400 mb-6">Ingresá tus credenciales para continuar</p>
+
+      @if (errorMessage) {
+        <div class="p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl mb-4">
+          <p class="text-red-700 dark:text-red-400 text-sm font-medium flex items-center gap-2">
+            <span class="pi pi-exclamation-triangle shrink-0"></span>
+            {{ errorMessage }}
+          </p>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5 mt-6">
+
+        <div class="flex flex-col gap-1.5">
+          <label for="email" class="text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+          <div class="relative">
+            <span class="pi pi-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></span>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="ejemplo@correo.com"
+              class="w-full !pl-10"
+            />
+          </div>
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <small class="text-red-500">Ingresá un email válido</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="clave" class="text-sm font-medium text-slate-700 dark:text-slate-300">Contraseña</label>
+          <div class="relative">
+            <span class="pi pi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></span>
+            <input
+              id="clave"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="clave"
+              placeholder="••••••••"
+              class="w-full pl-10 pr-10 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            />
+            <button
+              type="button"
+              (click)="showPassword.set(!showPassword())"
+              class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+            >
+              <span class="pi text-sm" [class.pi-eye]="!showPassword()" [class.pi-eye-slash]="showPassword()"></span>
+            </button>
+          </div>
+          @if (form.get('clave')?.invalid && form.get('clave')?.touched) {
+            <small class="text-red-500">La contraseña es requerida</small>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="form.invalid || loading"
+          class="w-full mt-2 py-3 rounded-xl font-medium text-base text-white transition-all
+                 bg-gradient-to-r from-indigo-500 to-indigo-500
+                 hover:from-indigo-600 hover:to-indigo-700
+                 disabled:opacity-60 disabled:cursor-not-allowed
+                 flex items-center justify-center gap-2"
+        >
+          @if (loading) {
+            <span class="pi pi-spin pi-spinner"></span>
+            Iniciando sesión...
+          } @else {
+            Ingresar
+          }
+        </button>
+
+      </form>
+    </div>
+  </div>
+
 </div>

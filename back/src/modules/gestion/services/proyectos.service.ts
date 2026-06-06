@@ -36,7 +36,14 @@ export class ProyectosService {
             if (p.estado === EstadoProyecto.FINALIZADO) return 2;
             return 3;
         };
-        proyectos.sort((a, b) => ordenProyecto(a) - ordenProyecto(b));
+        proyectos.sort((a, b) => {
+            const grupoDif = ordenProyecto(a) - ordenProyecto(b);
+            if (grupoDif !== 0) return grupoDif;
+            if (!a.fechaLimite && !b.fechaLimite) return 0;
+            if (!a.fechaLimite) return 1;
+            if (!b.fechaLimite) return -1;
+            return new Date(a.fechaLimite).getTime() - new Date(b.fechaLimite).getTime();
+        });
         return proyectos.map((p) => ({
             id: p.id,
             nombre: p.nombre,

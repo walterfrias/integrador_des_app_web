@@ -114,6 +114,13 @@ export class DashboardComponent {
     return this.modulos.filter(m => !m.adminOnly || this.usuario?.rol === 'ADMIN');
   }
 
+  get gridModulos(): string {
+    const n = this.modulosVisibles.length;
+    if (n === 1) return 'grid grid-cols-1 max-w-sm gap-4';
+    if (n === 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+  }
+
   constructor() {
     this.statsService.getStats().subscribe(s => {
       this.stats.set(s);

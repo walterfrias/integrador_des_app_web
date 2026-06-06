@@ -166,8 +166,6 @@
                             <div class="flex gap-0.5 shrink-0">
                                 <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
                                     pTooltip="Editar" tooltipPosition="top" (click)="abrirEditarTarea(tarea)"></button>
-                                <button pButton icon="pi pi-trash" severity="danger" text size="small"
-                                    pTooltip="Eliminar" tooltipPosition="top" (click)="confirmarEliminarTarea(tarea)"></button>
                             </div>
                         </div>
                         <div class="mt-1.5">
@@ -224,8 +222,6 @@
                             <div class="flex gap-0.5 shrink-0">
                                 <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
                                     pTooltip="Editar" tooltipPosition="top" (click)="abrirEditarTarea(tarea)"></button>
-                                <button pButton icon="pi pi-trash" severity="danger" text size="small"
-                                    pTooltip="Eliminar" tooltipPosition="top" (click)="confirmarEliminarTarea(tarea)"></button>
                             </div>
                         </div>
                         <div class="mt-1.5">
@@ -247,11 +243,15 @@
                                 </button>
                             }
                         </div>
-                        <div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-600">
+                        <div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-600 flex items-center justify-between">
                             <button class="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 flex items-center gap-1 transition-colors"
                                 (click)="cambiarEstado(tarea, 'PENDIENTE')">
                                 <span class="pi pi-undo text-[10px]"></span> Reabrir
                             </button>
+                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                <span class="pi pi-check-circle text-[10px]"></span>
+                                {{ tarea.fechaActualizacion | date:'dd/MM/yy' }}
+                            </span>
                         </div>
                     </div>
                 }
@@ -323,7 +323,7 @@
         <div class="flex flex-col gap-1.5">
             <label for="estado" class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</label>
             <p-select inputId="estado" formControlName="estado" [options]="estadosTarea" optionLabel="label"
-                optionValue="value" styleClass="w-full" />
+                optionValue="value" styleClass="w-full" appendTo="body" />
         </div>
         }
     </form>

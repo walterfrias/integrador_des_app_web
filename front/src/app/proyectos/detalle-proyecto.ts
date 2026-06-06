@@ -175,8 +175,8 @@ export class DetalleProyectoComponent implements OnInit {
 
     confirmarEliminarTarea(tarea: any) {
         this.confirmationService.confirm({
-            message: `¿Eliminar la tarea "${tarea.descripcion}"?`,
-            header: 'Confirmar eliminación',
+            message: `¿Eliminar permanentemente la tarea "${tarea.descripcion}" de la base de datos? Esta acción no se puede deshacer.`,
+            header: 'Eliminar de base de datos',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Eliminar',
             rejectLabel: 'Cancelar',
@@ -186,7 +186,7 @@ export class DetalleProyectoComponent implements OnInit {
                 this.tareasService.eliminarTarea(this.proyecto()!.id, tarea.id).subscribe({
                     next: () => {
                         this.proyecto.update(p => p ? { ...p, tareas: p.tareas.filter(t => t.id !== tarea.id) } : p);
-                        this.messageService.add({ severity: 'warn', summary: 'Tarea eliminada', detail: `"${tarea.descripcion}" fue eliminada.`, life: 3000 });
+                        this.messageService.add({ severity: 'warn', summary: 'Eliminada de la base de datos', detail: `"${tarea.descripcion}" fue eliminada permanentemente.`, life: 4000 });
                     },
                     error: () => {
                         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la tarea.', life: 4000 });

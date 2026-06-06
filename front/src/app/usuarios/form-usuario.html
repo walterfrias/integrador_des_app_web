@@ -1,3 +1,5 @@
+<p-toast />
+
 <div class="max-w-lg">
 
   <div class="flex items-center gap-3 mb-6">
@@ -58,37 +60,85 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label for="clave" class="text-sm font-medium text-slate-700 dark:text-slate-300">
-          Contraseña
-          @if (esEdicion) {
-            <span class="text-slate-400 dark:text-slate-500 font-normal ml-1">(dejá vacío para no cambiarla)</span>
+      @if (!esEdicion || form.get('rol')?.value !== 'ADMIN') {
+        <div class="flex flex-col gap-1.5">
+          <label for="clave" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Contraseña
+            @if (esEdicion) {
+              <span class="text-slate-400 dark:text-slate-500 font-normal ml-1">(dejá vacío para no cambiarla)</span>
+            }
+          </label>
+          <div class="relative">
+            <input
+              id="clave"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="clave"
+              [placeholder]="esEdicion ? 'Nueva contraseña (opcional)' : 'Mínimo 6 caracteres'"
+              class="w-full pr-10 py-2 px-3 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            />
+            <button
+              type="button"
+              (click)="showPassword.set(!showPassword())"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+            >
+              <span class="pi text-sm" [class.pi-eye]="!showPassword()" [class.pi-eye-slash]="showPassword()"></span>
+            </button>
+          </div>
+          @if (form.get('clave')?.touched && form.get('clave')?.errors?.['minlength']) {
+            <small class="text-emerald-600 dark:text-emerald-400">Mínimo 5 caracteres</small>
           }
-        </label>
-        <p-password
-          inputId="clave"
-          formControlName="clave"
-          [feedback]="false"
-          [toggleMask]="true"
-          [placeholder]="esEdicion ? 'Nueva contraseña (opcional)' : 'Mínimo 6 caracteres'"
-          styleClass="w-full"
-        />
-        @if (form.get('clave')?.invalid && form.get('clave')?.touched) {
-          <small class="text-red-500">Mínimo 6 caracteres</small>
+          @if (form.get('clave')?.touched && form.get('clave')?.errors?.['pattern']) {
+            <small class="text-emerald-600 dark:text-emerald-400">Debe incluir al menos una mayúscula y un número</small>
+          }
+        </div>
+
+        @if (!esEdicion || form.get('clave')?.value) {
+        <div class="flex flex-col gap-1.5">
+          <label for="confirmarClave" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Confirmar contraseña
+          </label>
+          <div class="relative">
+            <input
+              id="confirmarClave"
+              [type]="showConfirm() ? 'text' : 'password'"
+              formControlName="confirmarClave"
+              placeholder="Repetí la contraseña"
+              class="w-full pr-10 py-2 px-3 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+            />
+            <button
+              type="button"
+              (click)="showConfirm.set(!showConfirm())"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+            >
+              <span class="pi text-sm" [class.pi-eye]="!showConfirm()" [class.pi-eye-slash]="showConfirm()"></span>
+            </button>
+          </div>
+          @if (form.get('confirmarClave')?.touched && form.errors?.['clavesMismatch']) {
+            <small class="text-emerald-600 dark:text-emerald-400">Las contraseñas no coinciden</small>
+          }
+        </div>
         }
-      </div>
+      }
 
       <div class="flex flex-col gap-1.5">
         <label for="rol" class="text-sm font-medium text-slate-700 dark:text-slate-300">Rol</label>
-        <p-select
-          inputId="rol"
-          formControlName="rol"
-          [options]="roles"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Seleccioná un rol"
-          styleClass="w-full"
-        />
+        @if (esEdicion && form.get('rol')?.value === 'ADMIN') {
+          <div class="flex items-center gap-2 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800">
+            <span class="pi pi-shield text-indigo-500 text-sm"></span>
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Administrador</span>
+            <span class="ml-auto text-xs text-slate-400 dark:text-slate-500">No modificable</span>
+          </div>
+        } @else {
+          <p-select
+            inputId="rol"
+            formControlName="rol"
+            [options]="roles"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccioná un rol"
+            styleClass="w-full"
+          />
+        }
       </div>
 
       <div class="flex gap-3 pt-2">

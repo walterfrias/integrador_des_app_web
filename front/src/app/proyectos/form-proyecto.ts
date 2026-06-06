@@ -6,12 +6,15 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { ProyectosService, CreateProyectoPayload, UpdateProyectoPayload } from '../core/services/proyectos.service';
 import { ClientesService } from '../core/services/clientes.service';
 
 @Component({
     selector: 'app-form-proyecto',
-    imports: [ReactiveFormsModule, ButtonModule, InputTextModule, SelectModule, DatePickerModule, RouterLink, DialogModule],
+    imports: [ReactiveFormsModule, ButtonModule, InputTextModule, SelectModule, DatePickerModule, RouterLink, DialogModule, ToastModule],
+    providers: [MessageService],
     templateUrl: './form-proyecto.html',
 })
 export class FormProyectoComponent implements OnInit {
@@ -20,6 +23,8 @@ export class FormProyectoComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private proyectosService = inject(ProyectosService);
     private clientesService = inject(ClientesService);
+    private messageService = inject(MessageService);
+
     id: number | null = null;
     loading = signal(false);
     guardando = signal(false);
@@ -128,8 +133,11 @@ export class FormProyectoComponent implements OnInit {
             if (idCliente != null) data.idCliente = idCliente;
             if (fechaLimite) data.fechaLimite = fechaLimite;
             this.proyectosService.actualizar(this.id!, data).subscribe({
-                next: () => this.router.navigate(['/app/proyectos']),
-                error: () => { this.errorMessage.set('Error al actualizar'); this.guardando.set(false); },
+                next: () => {
+                    this.messageService.add({ severity: 'success', summary: 'Proyecto actualizado', detail: `"${nombre}" fue guardado correctamente.`, life: 2000 });
+                    setTimeout(() => this.router.navigate(['/app/proyectos']), 1500);
+                },
+                error: (err) => { this.errorMessage.set(err.error?.message ?? 'Error al actualizar el proyecto'); this.guardando.set(false); },
             });
         } else {
             const data: CreateProyectoPayload = { nombre: nombre! };
@@ -137,8 +145,11 @@ export class FormProyectoComponent implements OnInit {
             if (idCliente != null) data.idCliente = idCliente;
             if (fechaLimite) data.fechaLimite = fechaLimite;
             this.proyectosService.crear(data).subscribe({
-                next: () => this.router.navigate(['/app/proyectos']),
-                error: () => { this.errorMessage.set('Error al crear. Verifica que el nombre no este en uso.'); this.guardando.set(false); },
+                next: () => {
+                    this.messageService.add({ severity: 'success', summary: 'Proyecto creado', detail: `"${nombre}" fue creado exitosamente.`, life: 2000 });
+                    setTimeout(() => this.router.navigate(['/app/proyectos']), 1500);
+                },
+                error: (err) => { this.errorMessage.set(err.error?.message ?? 'Error al crear el proyecto'); this.guardando.set(false); },
             });
         }
     }
