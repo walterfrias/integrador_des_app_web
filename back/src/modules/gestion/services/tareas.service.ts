@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
-import { Tarea, EstadoTarea } from '../entities/tarea.entity';
+import { Tarea, EstadoTarea, PrioridadTarea } from '../entities/tarea.entity';
 import { Usuario } from '../../auth/entities/usuario.entity';
 import { CreateTareaDto } from '../dtos/input/create-tarea.dto';
 import { UpdateTareaDto } from '../dtos/input/update-tarea.dto';
@@ -35,6 +35,8 @@ export class TareasService {
     const nuevaTarea = this.tareaRepository.create({
       descripcion: String(dto.descripcion || ''),
       estado: estadoValido,
+      prioridad: (dto as any).prioridad ?? PrioridadTarea.MEDIA,
+      fechaLimite: (dto as any).fechaLimite ?? null,
     });
 
     nuevaTarea.proyecto = { id: Number(proyectoId) } as Tarea['proyecto'];

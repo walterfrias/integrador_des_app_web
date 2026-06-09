@@ -234,7 +234,7 @@
                                 [class]="tarea.prioridad === 'ALTA'  ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                                        : tarea.prioridad === 'MEDIA' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                                        : 'bg-slate-100 text-slate-500 dark:bg-slate-600 dark:text-slate-400'">
-                                <span class="pi pi-flag text-[8px]"></span>{{ tarea.prioridad ?? 'MEDIA' }}
+                                <span class="text-[8px]" [class]="tarea.prioridad === 'ALTA' ? 'pi pi-arrow-up' : tarea.prioridad === 'BAJA' ? 'pi pi-arrow-down' : 'pi pi-minus'"></span>{{ tarea.prioridad ?? 'MEDIA' }}
                             </span>
                             @if (tarea.fechaLimite) {
                             <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-0.5">
@@ -313,7 +313,7 @@
                                 [class]="tarea.prioridad === 'ALTA'  ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                                        : tarea.prioridad === 'MEDIA' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                                        : 'bg-slate-100 text-slate-500 dark:bg-slate-600 dark:text-slate-400'">
-                                <span class="pi pi-flag text-[8px]"></span>{{ tarea.prioridad ?? 'MEDIA' }}
+                                <span class="text-[8px]" [class]="tarea.prioridad === 'ALTA' ? 'pi pi-arrow-up' : tarea.prioridad === 'BAJA' ? 'pi pi-arrow-down' : 'pi pi-minus'"></span>{{ tarea.prioridad ?? 'MEDIA' }}
                             </span>
                             @if (tarea.fechaLimite) {
                             <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-0.5">
