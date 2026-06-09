@@ -31,22 +31,12 @@
         class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col gap-5 mb-6">
 
       <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Valor <span class="text-red-500">*</span></label>
-      <input pInputText formControlName="valor"
-          [type]="tipoContactoActual === 'EMAIL' ? 'email' : 'tel'"
-          [placeholder]="tipoContactoActual === 'EMAIL' ? 'usuario@ejemplo.com' : 'Ej: 11 1234-5678'"
-          class="w-full" />
-      
-      @if (formContacto.get('valor')?.errors?.['required'] && formContacto.get('valor')?.touched) {
-        <small class="text-red-500">El valor es requerido</small>
-      }
-      
-      @if (formContacto.get('valor')?.errors?.['pattern'] && formContacto.get('valor')?.touched) {
-        <small class="text-red-500">
-          {{ tipoContactoActual === 'EMAIL' ? 'Falta el @ o el dominio (ej: nombre@empresa.com)' : 'Formato de teléfono inválido (solo números y símbolos como + o -)' }}
-        </small>
-      }
-    </div>
+        <label for="nombre" class="text-sm font-medium text-slate-700 dark:text-slate-300">Nombre <span class="text-red-500">*</span></label>
+        <input pInputText id="nombre" formControlName="nombre" placeholder="Nombre del cliente" class="w-full" />
+        @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+          <small class="text-red-500">El nombre es requerido</small>
+        }
+      </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-1.5">
