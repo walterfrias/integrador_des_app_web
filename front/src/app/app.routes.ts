@@ -60,7 +60,14 @@ export const routes: Routes = [
         loadComponent: () => import('./proyectos/form-proyecto').then(m => m.FormProyectoComponent),
       },
       {
+        path: 'tareas',
+        data: { soloMias: false },
+        loadComponent: () =>
+          import('./tareas-proyecto/tareas-proyecto.component').then((m) => m.TareasProyectoComponent),
+      },
+      {
         path: 'mis-tareas',
+        data: { soloMias: true },
         loadComponent: () =>
           import('./tareas-proyecto/tareas-proyecto.component').then((m) => m.TareasProyectoComponent),
       },
