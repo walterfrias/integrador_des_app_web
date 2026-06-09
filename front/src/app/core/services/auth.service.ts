@@ -29,11 +29,11 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  getUsuario(): { nombre: string; rol: string } | null {
+  getUsuario(): { id: number; nombre: string; rol: string } | null {
     const token = this.getToken();
     if (!token) return null;
     const payload = JSON.parse(atob(token.split('.')[1]));
-    return { nombre: payload.nombre, rol: payload.rol };
+    return { id: payload.sub, nombre: payload.nombre, rol: payload.rol };
   }
 
   esAdmin(): boolean {

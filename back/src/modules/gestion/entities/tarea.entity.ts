@@ -16,6 +16,12 @@ export enum EstadoTarea {
   BAJA = 'BAJA',
 }
 
+export enum PrioridadTarea {
+  BAJA = 'BAJA',
+  MEDIA = 'MEDIA',
+  ALTA = 'ALTA',
+}
+
 @Entity('tareas')
 export class Tarea {
   @PrimaryGeneratedColumn()
@@ -26,6 +32,12 @@ export class Tarea {
 
   @Column({ type: 'enum', enum: EstadoTarea, default: EstadoTarea.PENDIENTE })
   estado!: EstadoTarea;
+
+  @Column({ type: 'enum', enum: PrioridadTarea, default: PrioridadTarea.MEDIA })
+  prioridad!: PrioridadTarea;
+
+  @Column({ type: 'date', nullable: true, name: 'fecha_limite' })
+  fechaLimite!: Date | null;
 
   @CreateDateColumn({ name: 'fecha_creacion' })
   fechaCreacion!: Date;

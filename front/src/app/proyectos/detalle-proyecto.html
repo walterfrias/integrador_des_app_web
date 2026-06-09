@@ -229,6 +229,19 @@
                             </div>
                             }
                         </div>
+                        <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5"
+                                [class]="tarea.prioridad === 'ALTA'  ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                       : tarea.prioridad === 'MEDIA' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                       : 'bg-slate-100 text-slate-500 dark:bg-slate-600 dark:text-slate-400'">
+                                <span class="pi pi-flag text-[8px]"></span>{{ tarea.prioridad ?? 'MEDIA' }}
+                            </span>
+                            @if (tarea.fechaLimite) {
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-0.5">
+                                <span class="pi pi-calendar text-[9px]"></span>{{ tarea.fechaLimite | date:'dd/MM/yy' }}
+                            </span>
+                            }
+                        </div>
                         <div class="mt-1.5">
                             @if (tarea.responsable) {
                                 @if (esAdmin()) {
@@ -293,6 +306,19 @@
                                 <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
                                     pTooltip="Editar" tooltipPosition="top" (click)="abrirEditarTarea(tarea)"></button>
                             </div>
+                            }
+                        </div>
+                        <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5"
+                                [class]="tarea.prioridad === 'ALTA'  ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                       : tarea.prioridad === 'MEDIA' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                       : 'bg-slate-100 text-slate-500 dark:bg-slate-600 dark:text-slate-400'">
+                                <span class="pi pi-flag text-[8px]"></span>{{ tarea.prioridad ?? 'MEDIA' }}
+                            </span>
+                            @if (tarea.fechaLimite) {
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-0.5">
+                                <span class="pi pi-calendar text-[9px]"></span>{{ tarea.fechaLimite | date:'dd/MM/yy' }}
+                            </span>
                             }
                         </div>
                         <div class="mt-1.5">
@@ -401,6 +427,18 @@
             @if (formTarea.get('descripcion')?.invalid && formTarea.get('descripcion')?.touched) {
             <small class="text-red-500">La descripción es requerida</small>
             }
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Prioridad</label>
+                <p-select formControlName="prioridad" [options]="prioridadesTarea" optionLabel="label"
+                    optionValue="value" styleClass="w-full" appendTo="body" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Fecha límite</label>
+                <input type="date" formControlName="fechaLimite"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
         </div>
         @if (tareaEditando) {
         <div class="flex flex-col gap-1.5">

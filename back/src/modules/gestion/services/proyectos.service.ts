@@ -128,6 +128,8 @@ export class ProyectosService {
                 id: t.id,
                 descripcion: t.descripcion,
                 estado: t.estado as unknown as EstadosTareasEnum,
+                prioridad: t.prioridad,
+                fechaLimite: t.fechaLimite,
                 fechaCreacion: t.fechaCreacion,
                 fechaActualizacion: t.fechaActualizacion,
                 responsable: t.responsable

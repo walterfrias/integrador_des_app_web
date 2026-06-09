@@ -10,7 +10,7 @@ export class TareasService {
 
   constructor(private http: HttpClient) {}
 
-  crearTarea(idProyecto: number, tarea: { descripcion: string }) {
+  crearTarea(idProyecto: number, tarea: { descripcion: string; prioridad?: string; fechaLimite?: string | null }) {
     return this.http.post(`${this.base}/${idProyecto}/tareas`, tarea);
   }
 

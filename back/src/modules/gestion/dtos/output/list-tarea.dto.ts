@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EstadosTareasEnum } from '../../enums/estados-tareas.enum';
+import { PrioridadTarea } from '../../entities/tarea.entity';
 
 export class ResponsableTareaDTO {
   @ApiProperty()
@@ -21,6 +22,12 @@ export class ListTareaDTO {
 
   @ApiProperty({ enum: EstadosTareasEnum })
   estado!: EstadosTareasEnum;
+
+  @ApiProperty({ enum: PrioridadTarea })
+  prioridad!: PrioridadTarea;
+
+  @ApiPropertyOptional()
+  fechaLimite!: Date | null;
 
   @ApiProperty()
   fechaCreacion!: Date;

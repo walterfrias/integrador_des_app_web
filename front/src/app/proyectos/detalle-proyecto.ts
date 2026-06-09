@@ -80,6 +80,8 @@ export class DetalleProyectoComponent implements OnInit {
     formTarea = this.fb.group({
         descripcion: ['', Validators.required],
         estado: ['PENDIENTE'],
+        prioridad: ['MEDIA'],
+        fechaLimite: [null as string | null],
     });
     guardandoTarea = signal(false);
     errorTarea = signal('');
@@ -87,6 +89,12 @@ export class DetalleProyectoComponent implements OnInit {
     estadosTarea = [
         { label: 'Pendiente', value: 'PENDIENTE' },
         { label: 'Finalizada', value: 'FINALIZADA' },
+        { label: 'Baja', value: 'BAJA' },
+    ];
+
+    prioridadesTarea = [
+        { label: 'Alta', value: 'ALTA' },
+        { label: 'Media', value: 'MEDIA' },
         { label: 'Baja', value: 'BAJA' },
     ];
 
@@ -172,14 +180,19 @@ export class DetalleProyectoComponent implements OnInit {
 
     abrirNuevaTarea() {
         this.tareaEditando = null;
-        this.formTarea.reset({ descripcion: '', estado: 'PENDIENTE' });
+        this.formTarea.reset({ descripcion: '', estado: 'PENDIENTE', prioridad: 'MEDIA', fechaLimite: null });
         this.errorTarea.set('');
         this.dialogTarea.set(true);
     }
 
     abrirEditarTarea(tarea: any) {
         this.tareaEditando = tarea;
-        this.formTarea.patchValue({ descripcion: tarea.descripcion, estado: tarea.estado });
+        this.formTarea.patchValue({
+            descripcion: tarea.descripcion,
+            estado: tarea.estado,
+            prioridad: tarea.prioridad ?? 'MEDIA',
+            fechaLimite: tarea.fechaLimite ? String(tarea.fechaLimite).substring(0, 10) : null,
+        });
         this.errorTarea.set('');
         this.dialogTarea.set(true);
     }
@@ -188,12 +201,12 @@ export class DetalleProyectoComponent implements OnInit {
         if (this.formTarea.invalid) return;
         this.guardandoTarea.set(true);
         this.errorTarea.set('');
-        const { descripcion, estado } = this.formTarea.value;
+        const { descripcion, estado, prioridad, fechaLimite } = this.formTarea.value;
         const proyectoId = this.proyecto()!.id;
 
         const request$ = this.tareaEditando
-            ? this.tareasService.actualizarTarea(proyectoId, this.tareaEditando.id, { descripcion, estado })
-            : this.tareasService.crearTarea(proyectoId, { descripcion: descripcion! });
+            ? this.tareasService.actualizarTarea(proyectoId, this.tareaEditando.id, { descripcion, estado, prioridad, fechaLimite: fechaLimite || null })
+            : this.tareasService.crearTarea(proyectoId, { descripcion: descripcion!, prioridad: prioridad ?? 'MEDIA', fechaLimite: fechaLimite || null });
 
         const esNueva = !this.tareaEditando;
         request$.subscribe({
