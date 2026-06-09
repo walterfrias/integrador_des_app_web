@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -55,9 +55,16 @@ export class FormClienteComponent implements OnInit {
 
   readonly CUIT_PATTERN = /^\d{2}-\d{6}-\d{2}$/;
 
+  private cuitValidator(control: AbstractControl): ValidationErrors | null {
+    const val: string = control.value ?? '';
+    const digitos = val.replace(/\D/g, '');
+    if (digitos.length === 0) return null;
+    return /^\d{2}-\d{6}-\d{2}$/.test(val) ? null : { pattern: true };
+  }
+
   form = this.fb.group({
     nombre: ['', Validators.required],
-    cuit: ['', Validators.pattern(/^\d{2}-\d{6}-\d{2}$/)],
+    cuit: ['', (c: AbstractControl) => this.cuitValidator(c)],
     direccion: [''],
   });
 

@@ -16,6 +16,7 @@ import { ProyectosService, ProyectoDTO } from '../core/services/proyectos.servic
 import { TareasService } from '../core/services/tareas.service';
 import { UsuariosService, Usuario } from '../core/services/usuarios.service';
 import { AsignacionesService, Asignacion } from '../core/services/asignaciones.service';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
     selector: 'app-detalle-proyecto',
@@ -37,19 +38,36 @@ export class DetalleProyectoComponent implements OnInit {
     private messageService = inject(MessageService);
     private router = inject(Router);
     private asignacionesService = inject(AsignacionesService);
+    private authService = inject(AuthService);
+    esAdmin() { return this.authService.esAdmin(); }
 
     proyecto = signal<ProyectoDTO | null>(null);
     loading = signal(true);
 
     usuariosActivos = signal<Usuario[]>([]);
+    cargandoUsuarios = signal(false);
     dialogResponsable = signal(false);
     tareaParaResponsable = signal<any>(null);
 
     // SEÑALES PARA ASIGNACIONES
     asignaciones = signal<Asignacion[]>([]);
+    mostrarBajas = signal(false);
     dialogAsignar = signal(false);
 
-    // PROPIEDAD COMPUTADA ASIGNACIONES
+    // PROPIEDADES COMPUTADAS ASIGNACIONES
+    asignacionesVisibles = computed(() =>
+        this.mostrarBajas()
+            ? this.asignaciones()
+            : this.asignaciones().filter(a => a.estado === 'ACTIVO')
+    );
+
+    usuariosDelProyecto = computed(() => {
+        const idsEnProyecto = this.asignaciones()
+            .filter(a => a.estado === 'ACTIVO')
+            .map(a => a.usuarioId);
+        return this.usuariosActivos().filter(u => idsEnProyecto.includes(u.id));
+    });
+
     usuariosAsignables = computed(() => {
         const activosEnProyecto = this.asignaciones()
             .filter(a => a.estado === 'ACTIVO')
@@ -128,8 +146,10 @@ export class DetalleProyectoComponent implements OnInit {
         const id = Number(this.route.snapshot.paramMap.get('id'));
         if (!id) { this.router.navigate(['/app/proyectos']); return; }
         this.cargar(id);
+        this.cargandoUsuarios.set(true);
         this.usuariosService.listar().subscribe({
-            next: (lista) => this.usuariosActivos.set(lista.filter(u => u.estado === 'ACTIVO')),
+            next: (lista) => { this.usuariosActivos.set(lista.filter(u => u.estado === 'ACTIVO')); this.cargandoUsuarios.set(false); },
+            error: () => this.cargandoUsuarios.set(false),
         });
     }
 
@@ -333,17 +353,20 @@ export class DetalleProyectoComponent implements OnInit {
         const proyectoId = this.proyecto()!.id;
         const previa = this.asignaciones().find(a => a.usuarioId === usuarioId);
 
-        // Creamos una función cortita para reutilizar la lógica de éxito
         const onSuccess = () => {
             this.dialogAsignar.set(false);
             this.cargarAsignaciones(proyectoId);
+            this.messageService.add({ severity: 'success', summary: 'Usuario asignado', detail: 'El usuario fue agregado al proyecto.', life: 3000 });
         };
 
-        // Separamos el llamado dependiendo de si reactivamos o creamos uno nuevo
+        const onError = () => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo asignar el usuario. Intentá de nuevo.', life: 4000 });
+        };
+
         if (previa && previa.estado === 'BAJA') {
-            this.asignacionesService.reactivar(previa.id).subscribe({ next: onSuccess });
+            this.asignacionesService.reactivar(previa.id).subscribe({ next: onSuccess, error: onError });
         } else {
-            this.asignacionesService.asignar(usuarioId, proyectoId).subscribe({ next: onSuccess });
+            this.asignacionesService.asignar(usuarioId, proyectoId).subscribe({ next: onSuccess, error: onError });
         }
     }
 

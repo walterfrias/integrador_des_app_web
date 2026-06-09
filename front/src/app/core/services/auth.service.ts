@@ -35,4 +35,8 @@ export class AuthService {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return { nombre: payload.nombre, rol: payload.rol };
   }
+
+  esAdmin(): boolean {
+    return this.getUsuario()?.rol === 'ADMIN';
+  }
 }
