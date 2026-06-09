@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { TareasService } from '../core/services/tareas.service';
 import { AuthService } from '../core/services/auth.service';
@@ -8,7 +8,7 @@ import { AuthService } from '../core/services/auth.service';
 @Component({
   selector: 'app-tareas-proyecto',
   standalone: true,
-  imports: [DatePipe, NgClass, TagModule, RouterLink],
+  imports: [DatePipe, NgClass, TagModule],
   templateUrl: './tareas-proyecto.component.html',
 })
 export class TareasProyectoComponent implements OnInit {
