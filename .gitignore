@@ -162,6 +162,7 @@ dev_*.md
 !.env.example
 
 .atl/
+.crossnote/
 
 # Deploy local — certificados SSL y archivos generados
 deploy/ssl/
