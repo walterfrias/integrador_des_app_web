@@ -8,6 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { UsuariosService, CreateUsuarioPayload, UpdateUsuarioPayload } from '../core/services/usuarios.service';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
   selector: 'app-form-usuario',
@@ -20,6 +21,11 @@ export class FormUsuarioComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private usuariosService = inject(UsuariosService);
+  private authService = inject(AuthService);
+
+  get usuarioActualId(): number | null {
+    return this.authService.getUsuario()?.id ?? null;
+  }
 
   private messageService = inject(MessageService);
 

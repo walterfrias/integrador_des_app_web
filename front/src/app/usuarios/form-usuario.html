@@ -45,9 +45,17 @@
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col gap-1.5">
           <label for="email" class="text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
-          <input pInputText id="email" type="email" formControlName="email" placeholder="usuario@ejemplo.com" class="w-full" />
-          @if (form.get('email')?.invalid && form.get('email')?.touched) {
-            <small class="text-red-500">Email inválido</small>
+          @if (esEdicion && form.get('rol')?.value === 'ADMIN' && id !== usuarioActualId) {
+            <div class="flex items-center gap-2 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800">
+              <span class="pi pi-envelope text-indigo-500 text-sm"></span>
+              <span class="text-sm text-slate-700 dark:text-slate-300">{{ form.get('email')?.value || '—' }}</span>
+              <span class="ml-auto text-xs text-slate-400 dark:text-slate-500">No modificable</span>
+            </div>
+          } @else {
+            <input pInputText id="email" type="email" formControlName="email" placeholder="usuario@ejemplo.com" class="w-full" />
+            @if (form.get('email')?.invalid && form.get('email')?.touched) {
+              <small class="text-red-500">Email inválido</small>
+            }
           }
         </div>
         <div class="flex flex-col gap-1.5">
